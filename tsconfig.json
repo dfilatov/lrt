@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "outDir": "./lib",
+        "target" : "es5",
+        "declaration": true,
+        "noEmitHelpers": true,
+        "sourceMap": true,
+        "lib": [
+            "es2017",
+            "dom"
+        ]
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "plugins": ["@typescript-eslint"],
+    "rules": {
+        "@typescript-eslint/generic-type-naming": ["error", "^T([A-Z][a-zA-Z]+)?$"],
+        "@typescript-eslint/type-annotation-spacing": "error",
+        "array-bracket-spacing": "error",
+        "arrow-spacing": "error",
+        "block-spacing": "error",
+        "curly": "error",
+        "func-call-spacing": "error",
+        "indent": ["error", 4],
+        "key-spacing": "error",
+        "max-len": ["error", { "code": 120 }],
+        "max-statements-per-line": ["error", { "max": 1 }],
+        "no-trailing-spaces": "error",
+        "object-curly-spacing": ["error", "always"],
+        "one-var": ["error", "never"],
+        "one-var-declaration-per-line": "error",
+        "quotes": ["error", "single"],
+        "semi": "error",
+        "semi-spacing": "error",
+        "space-before-function-paren": ["error", "never"],
+        "space-in-parens": "error"
+    }
+}

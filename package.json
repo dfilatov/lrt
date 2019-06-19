@@ -1,0 +1,37 @@
+{
+  "name": "chf",
+  "version": "1.0.0",
+  "description": "Module to split long-running tasks into chunks with limited budget",
+  "keywords": [
+    "chunks",
+    "budget",
+    "long-running"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/parser": "1.10.2",
+    "@typescript-eslint/eslint-plugin": "1.10.2",
+    "@types/jest": "24.0.15",
+    "@types/node": "12.0.8",
+    "eslint": "5.16.0",
+    "husky": "2.4.1",
+    "jest": "24.8.0",
+    "ts-jest": "24.0.2",
+    "typescript": "3.5.2"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/chunkify.js",
+  "types": "lib/chunkify.d.ts",
+  "scripts": {
+    "build": "rm -rf lib && npx tsc",
+    "lint": "npx eslint .",
+    "test": "npx jest"
+  },
+  "author": "Dmitry Filatov <dfilatov@inbox.ru>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dfilatov/chf.git"
+  },
+  "license": "MIT"
+}
