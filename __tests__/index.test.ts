@@ -1,7 +1,8 @@
-import chunkify from '../src/chunkify';
+import { createTask } from '../src';
+import { now } from '../src/now';
 
-test('should fulfill promise with result after job has done', done => {
-    chunkify({
+it('should fulfill promise with result after job has done', done => {
+    createTask({
         unit: function unit(i: number = 1) {
             sleep(10);
 
@@ -10,16 +11,16 @@ test('should fulfill promise with result after job has done', done => {
                 result: i + 1
             };
         }
-    }).promise.then(result => {
+    }).run().then(result => {
         expect(result).toBe(10);
         done();
     });
 });
 
-test('should reject promise if unit throws exception', done => {
+it('should reject promise if unit throws exception', done => {
     const err = new Error();
 
-    chunkify({
+    createTask({
         unit: function unit(i: number = 1) {
             sleep(10);
 
@@ -32,14 +33,39 @@ test('should reject promise if unit throws exception', done => {
                 result: i + 1
             };
         }
-    }).promise.catch(_err => {
+    }).run().catch(_err => {
         expect(_err).toBe(err);
         done();
     });
 });
 
-function sleep(ms: number): void {
-    const startTime = Date.now();
+it('should be abortable', done => {
+    const task = createTask({
+        unit: function unit(i: number = 1) {
+            sleep(10);
 
-    while(Date.now() - startTime < ms) {}
+            return {
+                next: i < 10? unit : null,
+                result: i + 1
+            };
+        }
+    });
+
+    task.run().then(
+        () => {
+            done('Aborted task mustn\'t be completed');
+        },
+        () => {
+            done('Aborted task mustn\'t be rejected');
+        }
+    );
+
+    setTimeout(task.abort, 50);
+    setTimeout(() => done(), 300);
+});
+
+function sleep(ms: number): void {
+    const startTime = now();
+
+    while(now() - startTime < ms) {}
 }
