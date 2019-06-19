@@ -24,8 +24,8 @@
   "files": [
     "lib"
   ],
-  "main": "lib/chunkify.js",
-  "types": "lib/chunkify.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf lib && npx tsc",
     "lint": "npx tsc --noEmit && npx eslint .",
