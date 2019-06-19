@@ -5,7 +5,10 @@
   "keywords": [
     "chunks",
     "budget",
-    "long-running"
+    "long-running",
+    "abortable",
+    "javascript",
+    "typescript"
   ],
   "devDependencies": {
     "@typescript-eslint/parser": "1.10.2",
@@ -25,7 +28,9 @@
   "types": "lib/chunkify.d.ts",
   "scripts": {
     "build": "rm -rf lib && npx tsc",
-    "lint": "npx eslint .",
+    "lint": "npx tsc --noEmit && npx eslint .",
+    "postpublish": "git push && git push --tags",
+    "prepublishOnly": "npm run build",
     "test": "npx jest"
   },
   "author": "Dmitry Filatov <dfilatov@inbox.ru>",
