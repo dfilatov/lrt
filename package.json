@@ -29,7 +29,7 @@
   "scripts": {
     "build": "rm -rf lib && npx tsc",
     "lint": "npx tsc --noEmit && npx eslint .",
-    "postpublish": "git push && git push --tags",
+    "postpublish": "git push --no-verify && git push --no-verify --tags",
     "prepublishOnly": "npm run build",
     "test": "npx jest"
   },
