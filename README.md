@@ -8,6 +8,7 @@ Chf is a minimal library for "chunkifying" long-running tasks with ability to be
 ```
 $ npm install chf
 ```
+Note: Chf requires native `Promise` api so if your environment doesn't support them, you will have to install any suitable polyfill as well.
 
 ## Usage
 ```ts
