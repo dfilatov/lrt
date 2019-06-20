@@ -6,10 +6,10 @@ Chf is a minimal library for "chunkifying" long-running tasks. The main idea is 
 
 ## Example
 ```ts
-import chunkify from 'chf';
+import { createTask } from 'chf';
 
-const task = chunkify({
-    // define unit of work
+const task = createTask({
+    // Define unit of work
     unit: function unit(prevResult: number = 0) {
         const result = prevResult + 1;
         
@@ -19,12 +19,15 @@ const task = chunkify({
         };
     }, 
     
-    // all units will be joined into chunks with budget limited to 20ms
+    // All units will be joined into chunks with budget limited to 20ms
     budget: 20
 });
 
-// You can wait until task has completed
-task.promise.then(
+// Run task
+const promise = task.run();
+
+// Wait until task has completed
+promise.then(
     result => {
         console.log(result);
     },
@@ -32,7 +35,6 @@ task.promise.then(
         console.error(err);
     });
 
-// You can abort task at any time, next chunk of units won't be executed
+// Abort task at any time, next chunk of units won't be executed
 setTimeout(task.abort, 50);
-
 ```
