@@ -12,10 +12,12 @@
         "block-spacing": "error",
         "curly": "error",
         "func-call-spacing": "error",
-        "indent": ["error", 4],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "key-spacing": "error",
         "max-len": ["error", { "code": 120 }],
         "max-statements-per-line": ["error", { "max": 1 }],
+        "no-extra-parens": "error",
+        "no-multi-spaces": "error",
         "no-trailing-spaces": "error",
         "object-curly-spacing": ["error", "always"],
         "one-var": ["error", "never"],
@@ -24,6 +26,9 @@
         "semi": "error",
         "semi-spacing": "error",
         "space-before-function-paren": ["error", "never"],
-        "space-in-parens": "error"
+        "space-in-parens": "error",
+        "space-infix-ops" : "error",
+        "space-unary-ops": "error",
+        "switch-colon-spacing": "error"
     }
 }

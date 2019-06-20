@@ -1,41 +1,24 @@
-import { Scheduler, DEFAULT_SCHEDULER } from './scheduler';
+import { Unit, NextUnit, Task } from './types';
+import { ChunkSchedulerType, getChunkScheduler } from './chunkSchedulers';
 import { now } from './now';
 
-const DEFAULT_BUDGET = 12;
-
-interface Unit<T = undefined> {
-    (prevValue?: T): T extends undefined?
-        {
-            result?: undefined;
-            next: NextUnit<T>;
-        } :
-        {
-            result: T;
-            next: NextUnit<T>;
-        };
-}
-
-type NextUnit<T> = Unit<T> | null;
-
-interface Task<T> {
-    run(): Promise<T>;
-    abort(): void;
-}
+const DEFAULT_CHUNK_BUDGET = 12;
 
 function createTask<T = undefined>({
     unit,
-    budget = DEFAULT_BUDGET,
-    scheduler = DEFAULT_SCHEDULER
+    chunkBudget = DEFAULT_CHUNK_BUDGET,
+    chunkScheduler: chunkSchedulerType = 'auto'
 }: {
     unit: Unit<T>;
-    budget?: number;
-    scheduler?: Scheduler<unknown>;
+    chunkBudget?: number;
+    chunkScheduler?: ChunkSchedulerType;
 }): Task<T> {
+    const chunkScheduler = getChunkScheduler(chunkSchedulerType);
+    let chunkSchedulerToken: unknown = null;
     let nextUnit: NextUnit<T> = unit;
     let result: T | undefined = undefined;
     let aborted = false;
     let promise: Promise<T> | null = null;
-    let schedulerToken: unknown = null;
 
     return {
         run() {
@@ -44,12 +27,12 @@ function createTask<T = undefined>({
             }
 
             return promise = new Promise((resolve, reject) => {
-                schedulerToken = scheduler.set(function chunk(): void {
+                chunkSchedulerToken = chunkScheduler.set(function chunk(): void {
                     if(aborted) {
                         return;
                     }
 
-                    let restBudget = budget;
+                    let restBudget = chunkBudget;
 
                     while(nextUnit !== null) {
                         const startTime = now();
@@ -75,16 +58,16 @@ function createTask<T = undefined>({
                         resolve(result);
                     }
                     else {
-                        schedulerToken = scheduler.set(chunk);
+                        chunkSchedulerToken = chunkScheduler.set(chunk);
                     }
                 });
             });
         },
 
         abort() {
-            if(scheduler.clear && schedulerToken !== null) {
-                scheduler.clear(schedulerToken);
-                schedulerToken = null;
+            if(chunkScheduler.clear && chunkSchedulerToken !== null) {
+                chunkScheduler.clear(chunkSchedulerToken);
+                chunkSchedulerToken = null;
             }
 
             aborted = true;
@@ -93,8 +76,5 @@ function createTask<T = undefined>({
 }
 
 export {
-    Unit,
-    Task,
-
     createTask
 };

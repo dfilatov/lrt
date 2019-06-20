@@ -7,7 +7,7 @@ it('should fulfill promise with result after job has done', done => {
             sleep(10);
 
             return {
-                next: i < 9? unit : null,
+                next: i < 9 ? unit : null,
                 result: i + 1
             };
         }
@@ -45,7 +45,7 @@ it('should be abortable', done => {
             sleep(10);
 
             return {
-                next: i < 10? unit : null,
+                next: i < 10 ? unit : null,
                 result: i + 1
             };
         }

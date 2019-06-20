@@ -1,2 +1,3 @@
-export { Unit, Task, createTask } from './task';
-export { Scheduler } from './scheduler';
+export { createTask } from './task';
+export { Unit, Task } from './types';
+export { ChunkScheduler } from './chunkSchedulers';
