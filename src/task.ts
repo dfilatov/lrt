@@ -3,7 +3,7 @@ import { now } from './now';
 
 const DEFAULT_BUDGET = 12;
 
-interface Unit<T> {
+interface Unit<T = undefined> {
     (prevValue?: T): T extends undefined?
         {
             result?: undefined;
