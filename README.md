@@ -4,6 +4,20 @@
 
 Chf is a minimal library for "chunkifying" long-running tasks. The main idea is to split such long-running task into small units of work joined into chunks with limited budget of execution time.
 
+## Installation
+```
+$ npm install chf
+```
+
+## Usage
+```ts
+// with ES6 modules
+import { createTask } from 'chf';
+
+// with CommonJS modules
+const { createTask } = require('chf');
+```
+
 ## Example
 ```ts
 import { createTask } from 'chf';
@@ -19,7 +33,7 @@ const task = createTask({
         };
     }, 
     
-    // All units will be joined into chunks with budget limited to 20ms
+    // All units will be joined into chunks with execution budget limited to 20ms
     budget: 20
 });
 
