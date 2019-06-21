@@ -26,15 +26,33 @@ const { createTask } = require('lrt');
 ## API
 
 ```ts
-task = createTask(options);
+const task = createTask(options);
 ```
-  * `options.unit` function representing a unit of work (required)
-  * `options.chunkBudget` execution budget of chunk in milliseconds (optional, default is `12`)
-  * `options.chunkScheduler` chunk scheduler, can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler (optional, default is `'auto'`)
+  * `options.unit` (required) a unit of work
+  * `options.chunkBudget` (optional, default is `12`) an execution budget of chunk in milliseconds
+  * `options.chunkScheduler` (optional, default is `'auto'`) a chunk scheduler, can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
 
 Returned `task` has only two methods:
   * `task.run()` returns promise resolved or rejected after task has completed or thrown an error respectively
   * `task.abort()` aborts task execution as soon as possible (see diagram above)
+  
+### Unit of work
+"Unit of work" is represented with a function doing current part of task and returning an object with the following properties:
+  * `next` (required) pointing to the next unit of work or equal to `null` if the current unit is last and task is completed
+  * `result` (optional) result 
+  
+If the previous unit returns `result`, it will be passed as an argument to the next unit. First unit doesn't obtain this argument and default value can be specified as an initial one.
+  
+```ts
+const unit = (previousResult = 0) => {
+    const result = doCurrentPartOfTask(prevResult);
+    
+    return {
+        next: unit, // or null if task is completed
+        result
+    };
+};
+```
 
 ## Example
 ```ts
@@ -51,7 +69,7 @@ const unit = (prevResult = 0) => {
     };
 };
 
-// Creates task
+// Create task
 const task = createTask({
     unit,
 
@@ -62,7 +80,7 @@ const task = createTask({
 // Run task
 const promise = task.run();
 
-// Wait until task has completed
+// Wait until task has been completed
 promise.then(
     result => {
         console.log(result);
