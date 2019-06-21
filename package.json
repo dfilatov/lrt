@@ -1,6 +1,6 @@
 {
   "name": "chf",
-  "version": "3.0.0-rc0",
+  "version": "3.0.0-rc1",
   "description": "Module to split long-running tasks into chunks with limited budget",
   "keywords": [
     "chunks",
