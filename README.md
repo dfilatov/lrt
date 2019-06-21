@@ -5,7 +5,7 @@
 LRT (stands for Long-running task) is a minimal library for "chunkifying" long-running tasks with ability to be aborted.
 The main idea is to split such long-running task into small units of work joined into chunks with limited budget of execution time. Units of works are executed synchronously until budget of current chunk is reached, after that thread is unblocked until scheduler executes next chunk and so on.
 
-<img width="1280" alt="LRT" src="https://user-images.githubusercontent.com/67957/59948554-0bb6e500-9479-11e9-9b5b-dfd8fce3c2dd.png">
+<img width="1274" alt="LRT" src="https://user-images.githubusercontent.com/67957/59948608-46b91880-9479-11e9-8dab-7e6272ecdffe.png">
 
 
 ## Installation
