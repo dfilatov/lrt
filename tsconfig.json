@@ -4,6 +4,7 @@
         "outDir": "./lib",
         "target" : "es5",
         "declaration": true,
+        "declarationDir": "./lib/types",
         "noEmitHelpers": true,
         "sourceMap": true,
         "lib": [

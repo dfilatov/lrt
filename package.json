@@ -18,6 +18,8 @@
     "eslint": "5.16.0",
     "husky": "2.4.1",
     "jest": "24.8.0",
+    "rollup": "1.15.6",
+    "rollup-plugin-typescript2": "0.21.2",
     "ts-jest": "24.0.2",
     "typescript": "3.5.2"
   },
@@ -25,9 +27,9 @@
     "lib"
   ],
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "types": "lib/types/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && npx tsc",
+    "build": "rm -rf lib && npx rollup -c",
     "lint": "npx tsc --noEmit && npx eslint .",
     "postpublish": "git push --no-verify && git push --no-verify --tags",
     "prepublishOnly": "npm run build",
