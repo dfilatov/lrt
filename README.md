@@ -25,15 +25,17 @@ const { createTask } = require('lrt');
 import { createTask, Unit } from 'lrt';
 
 // Define unit of work
-const unit: Unit<number> = (prevResult: number = 0) => {
+const unit: Unit<number> = (prevResult = 0) => {
     const result = prevResult + 1;
 
+    // Return "next" unit and "result" until job is done
     return {
         next: result < 10? unit : null,
         result
     };
 };
 
+// Creates task
 const task = createTask({
     unit,
 
