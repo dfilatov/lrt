@@ -23,6 +23,19 @@ import { createTask } from 'lrt';
 const { createTask } = require('lrt');
 ```
 
+## API
+
+```ts
+task = createTask(options);
+```
+  * `options.unit` function representing a unit of work (required)
+  * `options.chunkBudget` execution budget of chunk in milliseconds (optional, default is `12`)
+  * `options.chunkScheduler` chunk scheduler, can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler (optional, default is `'auto'`)
+
+Returned `task` has only two methods:
+  * `task.run()` returns promise resolved or rejected after task has completed or thrown an error respectively
+  * `task.abort()` aborts task execution as soon as possible (see diagram above)
+
 ## Example
 ```ts
 import { createTask } from 'lrt';
