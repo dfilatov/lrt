@@ -20,11 +20,7 @@ interface Task<T> {
 }
 
 interface TaskOptions<T> {
-    /** unit of work */
     unit: Unit<T>;
-    /**
-     * @defaultValue 12
-     */
     chunkBudget?: number;
     chunkScheduler?: ChunkSchedulerType;
 }
