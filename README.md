@@ -28,7 +28,7 @@ const { createTask } = require('lrt');
 ```ts
 const task = createTask(options);
 ```
-  * `options.unit` (required) a unit of work
+  * `options.unit` (required) a [unit of work](#unit-of-work)
   * `options.chunkBudget` (optional, default is `12`) an execution budget of chunk in milliseconds
   * `options.chunkScheduler` (optional, default is `'auto'`) a chunk scheduler, can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
 
@@ -43,6 +43,7 @@ Returned `task` has only two methods:
   
 If the previous unit returns `result`, it will be passed as an argument to the next unit. First unit doesn't obtain this argument and default value can be specified as an initial one.
   
+Example:
 ```ts
 const unit = (previousResult = 0) => {
     const result = doCurrentPartOfTask(prevResult);
