@@ -1,41 +1,44 @@
-# Chf
-[![Build Status](https://img.shields.io/travis/dfilatov/chf/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/chf/branches)
-[![NPM Version](https://img.shields.io/npm/v/chf.svg?style=flat-square)](https://www.npmjs.com/package/chf)
+# LRT
+[![Build Status](https://img.shields.io/travis/dfilatov/lrt/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/lrt/branches)
+[![NPM Version](https://img.shields.io/npm/v/lrt.svg?style=flat-square)](https://www.npmjs.com/package/lrt)
 
-Chf is a minimal library for "chunkifying" long-running tasks with ability to be aborted. The main idea is to split such long-running task into small units of work joined into chunks with limited budget of execution time.
+LRT (Long Running Task) is a minimal library for "chunkifying" long-running tasks with ability to be aborted.
+The main idea is to split such long-running task into small units of work joined into chunks with limited budget of execution time.
 
 ## Installation
 ```
-$ npm install chf
+$ npm install lrt
 ```
-Note: Chf requires native `Promise` api so if your environment doesn't support them, you will have to install any suitable polyfill as well.
+Note: LRT requires native `Promise` api so if your environment doesn't support them, you will have to install any suitable polyfill as well.
 
 ## Usage
 ```ts
 // with ES6 modules
-import { createTask } from 'chf';
+import { createTask } from 'lrt';
 
 // with CommonJS modules
-const { createTask } = require('chf');
+const { createTask } = require('lrt');
 ```
 
 ## Example
 ```ts
-import { createTask } from 'chf';
+import { createTask, Unit } from 'lrt';
+
+// Define unit of work
+const unit: Unit<number> = (prevResult: number = 0) => {
+    const result = prevResult + 1;
+
+    return {
+        next: result < 10? unit : null,
+        result
+    };
+};
 
 const task = createTask({
-    // Define unit of work
-    unit: function unit(prevResult: number = 0) {
-        const result = prevResult + 1;
-        
-        return {            
-            next: result < 10? unit : null,
-            result
-        };
-    }, 
-    
-    // All units will be joined into chunks with execution budget limited to 20ms
-    budget: 20
+    unit,
+
+    // All units will be joined into chunks with execution budget limited to 10ms
+    chunkBudget: 10
 });
 
 // Run task

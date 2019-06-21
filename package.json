@@ -1,10 +1,11 @@
 {
-  "name": "chf",
-  "version": "3.0.0-rc1",
+  "name": "lrt",
+  "version": "1.0.0",
   "description": "Module to split long-running tasks into chunks with limited budget",
   "keywords": [
     "chunks",
     "budget",
+    "task",
     "long-running",
     "abortable",
     "javascript",
@@ -38,7 +39,7 @@
   "author": "Dmitry Filatov <dfilatov@inbox.ru>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dfilatov/chf.git"
+    "url": "git://github.com/dfilatov/lrt.git"
   },
   "license": "MIT"
 }
