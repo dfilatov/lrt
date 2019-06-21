@@ -30,7 +30,7 @@ const task = createTask(options);
 ```
   * `options.unit` (required) a [unit of work](#unit-of-work)
   * `options.chunkBudget` (optional, default is `12`) an execution budget of chunk in milliseconds
-  * `options.chunkScheduler` (optional, default is `'auto'`) a chunk scheduler, can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
+  * `options.chunkScheduler` (optional, default is `'auto'`) a [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
 
 Returned `task` has only two methods:
   * `task.run()` returns promise resolved or rejected after task has completed or thrown an error respectively
@@ -54,6 +54,9 @@ const unit = (previousResult = 0) => {
     };
 };
 ```
+
+### Chunk scheduler
+Chunk scheduler is utilized internally to schedule execution of the next chunk of units. By default (without specifying corresponding option) LRT tries to detect the best available option for the current environment. In browsers any of `requestIdleCallback` or `requestAnimationFrame` will be used depending on their availability, or `setImmediate` inside NodeJS. If nothing suitable is available then regular `setTimeout` is used as a fallback. Also you can pass your own implementation of scheduler.
 
 ## Example
 ```ts
