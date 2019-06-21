@@ -5,6 +5,9 @@
 LRT (Long Running Task) is a minimal library for "chunkifying" long-running tasks with ability to be aborted.
 The main idea is to split such long-running task into small units of work joined into chunks with limited budget of execution time.
 
+<img width="1158" alt="LRT" src="https://user-images.githubusercontent.com/67957/59919291-b6a2b100-942f-11e9-96c1-20f330d53f67.png">
+
+
 ## Installation
 ```
 $ npm install lrt
@@ -22,10 +25,10 @@ const { createTask } = require('lrt');
 
 ## Example
 ```ts
-import { createTask, Unit } from 'lrt';
+import { createTask } from 'lrt';
 
 // Define unit of work
-const unit: Unit<number> = (prevResult = 0) => {
+const unit = (prevResult = 0) => {
     const result = prevResult + 1;
 
     // Return "next" unit and "result" until job is done
