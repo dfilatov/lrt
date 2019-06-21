@@ -58,6 +58,24 @@ const unit = (previousResult = 0) => {
 ### Chunk scheduler
 Chunk scheduler is utilized internally to schedule execution of the next chunk of units. By default (without specifying corresponding option) LRT tries to detect the best available option for the current environment. In browsers any of `requestIdleCallback` or `requestAnimationFrame` will be used depending on their availability, or `setImmediate` inside NodeJS. If nothing suitable is available then regular `setTimeout` is used as a fallback. Also you can pass your own implementation of scheduler.
 
+#### Custom chunk scheduler
+Custom scheduler should implement two methods:
+  * `request(fn)` (required) accepts function `fn` and returns `token` for possible aborting via `clear` method (if it is specified)
+  * `cancel(token)` (optional) accepts `token` and cancels scheduling
+  
+For example, let's implement scheduler which runs next chunk of units in ~100 milliseconds after previous chunk has ended
+```ts
+const customChunkScheduler = {
+    request: fn => setTimeout(fn, 100),
+    cancel: token => clearTimeout(token)
+};
+
+const task = createTask({
+    unit,
+    chunkScheduler: customChunkScheduler
+});
+```
+
 ## Full example
 ```ts
 import { createTask } from 'lrt';
