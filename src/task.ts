@@ -1,22 +1,20 @@
-import { Unit, NextUnit, Task } from './types';
-import { ChunkSchedulerType, getChunkScheduler } from './chunkSchedulers';
+import { NextUnit, Task, TaskOptions } from './types';
+import { getChunkScheduler } from './chunkSchedulers';
 import { now } from './now';
 
 const DEFAULT_CHUNK_BUDGET = 12;
 
-function createTask<T = undefined>({
-    unit,
-    chunkBudget = DEFAULT_CHUNK_BUDGET,
-    chunkScheduler: chunkSchedulerType = 'auto'
-}: {
-    unit: Unit<T>;
-    chunkBudget?: number;
-    chunkScheduler?: ChunkSchedulerType;
-}): Task<T> {
+function createTask<T = void>(
+    {
+        unit,
+        chunkBudget = DEFAULT_CHUNK_BUDGET,
+        chunkScheduler: chunkSchedulerType = 'auto'
+    }: TaskOptions<T>
+): Task<T> {
     const chunkScheduler = getChunkScheduler(chunkSchedulerType);
     let chunkSchedulerToken: unknown = null;
     let nextUnit: NextUnit<T> = unit;
-    let result: T | undefined = undefined;
+    let result: T | undefined;
     let aborted = false;
     let promise: Promise<T> | null = null;
 
@@ -27,7 +25,8 @@ function createTask<T = undefined>({
             }
 
             return promise = new Promise((resolve, reject) => {
-                chunkSchedulerToken = chunkScheduler.set(function chunk(): void {
+                chunkSchedulerToken = chunkScheduler.request(function chunk(): void {
+                    // needed for chunk schedulers without cancellation api
                     if(aborted) {
                         return;
                     }
@@ -58,15 +57,15 @@ function createTask<T = undefined>({
                         resolve(result);
                     }
                     else {
-                        chunkSchedulerToken = chunkScheduler.set(chunk);
+                        chunkSchedulerToken = chunkScheduler.request(chunk);
                     }
                 });
             });
         },
 
         abort() {
-            if(chunkScheduler.clear && chunkSchedulerToken !== null) {
-                chunkScheduler.clear(chunkSchedulerToken);
+            if(chunkScheduler.cancel && chunkSchedulerToken !== null) {
+                chunkScheduler.cancel(chunkSchedulerToken);
                 chunkSchedulerToken = null;
             }
 

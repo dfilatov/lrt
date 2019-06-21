@@ -1,23 +1,23 @@
 import { ChunkScheduler, ChunkSchedulerType } from './types';
-import { requestAnimationFrameChunkScheduler } from './requestAnimationFrameChunkScheduler';
-import { requestIdleCallbackChunkScheduler } from './requestIdleCallbackChunkScheduler';
-import { setImmediateChunkScheduler } from './setImmediateChunkScheduler';
+import { animationFrameChunkScheduler } from './animationFrameChunkScheduler';
+import { idleCallbackChunkScheduler } from './idleCallbackChunkScheduler';
+import { immediateChunkScheduler } from './immediateChunkScheduler';
 import { timeoutChunkScheduler } from './timeoutChunkScheduler';
 
 function getChunkScheduler(kind: ChunkSchedulerType): ChunkScheduler {
     let chunkScheduler: ChunkScheduler | null = null;
 
     switch(kind) {
-        case 'requestAnimationFrame':
-            chunkScheduler = requestAnimationFrameChunkScheduler;
+        case 'animationFrame':
+            chunkScheduler = animationFrameChunkScheduler;
             break;
 
-        case 'requestIdleCallback':
-            chunkScheduler = requestIdleCallbackChunkScheduler;
+        case 'idleCallback':
+            chunkScheduler = idleCallbackChunkScheduler;
             break;
 
-        case 'setImmediate':
-            chunkScheduler = setImmediateChunkScheduler;
+        case 'immediate':
+            chunkScheduler = immediateChunkScheduler;
             break;
 
         case 'timeout':
@@ -26,9 +26,9 @@ function getChunkScheduler(kind: ChunkSchedulerType): ChunkScheduler {
 
         case 'auto':
             chunkScheduler =
-                requestIdleCallbackChunkScheduler ||
-                requestAnimationFrameChunkScheduler ||
-                setImmediateChunkScheduler;
+                idleCallbackChunkScheduler ||
+                animationFrameChunkScheduler ||
+                immediateChunkScheduler;
             break;
 
         default:

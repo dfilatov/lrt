@@ -1,14 +1,14 @@
 type ChunkSchedulerType =
-    'requestAnimationFrame' |
-    'requestIdleCallback' |
-    'setImmediate' |
+    'animationFrame' |
+    'idleCallback' |
+    'immediate' |
     'timeout' |
     'auto' |
     ChunkScheduler;
 
 interface ChunkScheduler<T = unknown> {
-    set(fn: () => T): T;
-    clear?(t: T): void;
+    request(fn: () => T): T;
+    cancel?(t: T): void;
 }
 
 export {

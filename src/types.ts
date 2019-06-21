@@ -1,5 +1,7 @@
-interface Unit<T = undefined> {
-    (prevValue?: T): T extends undefined?
+import { ChunkSchedulerType } from './chunkSchedulers';
+
+interface Unit<T = void> {
+    (prevValue?: T): T extends void?
         {
             result?: undefined;
             next: NextUnit<T>;
@@ -17,8 +19,19 @@ interface Task<T> {
     abort(): void;
 }
 
+interface TaskOptions<T> {
+    /** unit of work */
+    unit: Unit<T>;
+    /**
+     * @defaultValue 12
+     */
+    chunkBudget?: number;
+    chunkScheduler?: ChunkSchedulerType;
+}
+
 export {
     Unit,
     NextUnit,
-    Task
+    Task,
+    TaskOptions
 };

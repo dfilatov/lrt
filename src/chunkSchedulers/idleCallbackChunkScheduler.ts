@@ -23,16 +23,16 @@ declare global {
     }
 }
 
-const requestIdleCallbackChunkScheduler: ChunkScheduler<number> | null =
+const idleCallbackChunkScheduler: ChunkScheduler<number> | null =
     typeof window !== 'undefined' &&
     typeof window.requestIdleCallback === 'function' &&
     typeof window.cancelIdleCallback === 'function' ?
         {
-            set: fn => window.requestIdleCallback!(fn),
-            clear: token => window.cancelIdleCallback!(token)
+            request: fn => window.requestIdleCallback!(fn),
+            cancel: token => window.cancelIdleCallback!(token)
         } :
         null;
 
 export {
-    requestIdleCallbackChunkScheduler
+    idleCallbackChunkScheduler
 };
