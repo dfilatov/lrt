@@ -58,28 +58,31 @@ const unit = (previousResult = 0) => {
 ### Chunk scheduler
 Chunk scheduler is utilized internally to schedule execution of the next chunk of units. By default (without specifying corresponding option) LRT tries to detect the best available option for the current environment. In browsers any of `requestIdleCallback` or `requestAnimationFrame` will be used depending on their availability, or `setImmediate` inside NodeJS. If nothing suitable is available then regular `setTimeout` is used as a fallback. Also you can pass your own implementation of scheduler.
 
-## Example
+## Full example
 ```ts
 import { createTask } from 'lrt';
 
+// Imitate a part of long running task taking 80ms in the whole
+function doPartOfTask(i) {
+    const startTime = Date.now();
+
+    while(Date.now() - startTime < 8);
+
+    return i + 1;
+}
+
 // Define unit of work
 const unit = (prevResult = 0) => {
-    const result = prevResult + 1;
+    const result = doPartOfTask(prevResult);
 
-    // Return "next" unit and "result" until job is done
     return {
-        next: result < 10? unit : null,
+        next: result < 10 ? unit : null, // 10 units will be executed
         result
     };
 };
 
 // Create task
-const task = createTask({
-    unit,
-
-    // All units will be joined into chunks with execution budget limited to 10ms
-    chunkBudget: 10
-});
+const task = createTask({ unit });
 
 // Run task
 const promise = task.run();
@@ -87,7 +90,7 @@ const promise = task.run();
 // Wait until task has been completed
 promise.then(
     result => {
-        console.log(result);
+        console.log(result); //
     },
     err => {
         console.error(err);
