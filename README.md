@@ -76,6 +76,16 @@ const task = createTask({
 });
 ```
 
+## FAQ
+
+**What if unit takes more time than chunk budget?**
+
+Generally this means that chunk budget is too small or you need to split your task into smaller units. Anyway LRT guarantees within each chunk at least one of units is executed. 
+
+**Why not just move long-running task into Web Worker?**
+
+Moreover, you can use `LRT` inside Web Worker and get the best of both worlds.
+
 ## Full example
 ```ts
 import { createTask } from 'lrt';
