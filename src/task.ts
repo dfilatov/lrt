@@ -31,11 +31,10 @@ function createTask<T = void>(
                         return;
                     }
 
+                    let startTime = now();
                     let restBudget = chunkBudget;
 
                     while(nextUnit !== null) {
-                        const startTime = now();
-
                         try {
                             ({ next: nextUnit, result } = unit(result));
                         }
@@ -51,6 +50,8 @@ function createTask<T = void>(
                         if(restBudget < elapsedTime) {
                             break;
                         }
+
+                        startTime += elapsedTime;
                     }
 
                     if(nextUnit === null) {
