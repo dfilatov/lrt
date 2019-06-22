@@ -4,10 +4,10 @@ import { idleCallbackChunkScheduler } from './idleCallbackChunkScheduler';
 import { immediateChunkScheduler } from './immediateChunkScheduler';
 import { timeoutChunkScheduler } from './timeoutChunkScheduler';
 
-function getChunkScheduler(kind: ChunkSchedulerType): ChunkScheduler {
+function getChunkScheduler(type: ChunkSchedulerType): ChunkScheduler {
     let chunkScheduler: ChunkScheduler | null = null;
 
-    switch(kind) {
+    switch(type) {
         case 'animationFrame':
             chunkScheduler = animationFrameChunkScheduler;
             break;
@@ -32,7 +32,7 @@ function getChunkScheduler(kind: ChunkSchedulerType): ChunkScheduler {
             break;
 
         default:
-            chunkScheduler = kind;
+            chunkScheduler = type;
     }
 
     return chunkScheduler || timeoutChunkScheduler;

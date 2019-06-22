@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Module to split long-running tasks into chunks with limited budget",
   "keywords": [
+    "scheduler",
     "chunks",
     "budget",
     "task",
