@@ -1,8 +1,8 @@
 import { ChunkScheduler, ChunkSchedulerType } from './types';
-import { animationFrameChunkScheduler } from './animationFrameChunkScheduler';
-import { idleCallbackChunkScheduler } from './idleCallbackChunkScheduler';
-import { immediateChunkScheduler } from './immediateChunkScheduler';
-import { timeoutChunkScheduler } from './timeoutChunkScheduler';
+import { animationFrameChunkScheduler } from './animationFrame';
+import { idleCallbackChunkScheduler } from './idleCallback';
+import { immediateChunkScheduler } from './immediate';
+import { timeoutChunkScheduler } from './timeout';
 
 function getChunkScheduler(type: ChunkSchedulerType): ChunkScheduler {
     let chunkScheduler: ChunkScheduler | null = null;

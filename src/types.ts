@@ -1,5 +1,23 @@
 import { ChunkSchedulerType } from './chunkSchedulers';
 
+interface Scheduler {
+    runTask<T = void>(unit: Unit<T>): Promise<T>;
+    abortTask(promise: Promise<unknown>): void;
+}
+
+interface SchedulerOptions {
+    chunkScheduler?: ChunkSchedulerType;
+    chunkBudget?: number;
+}
+
+interface Task {
+    nextUnit: Unit<unknown>;
+    prevUnitResult: unknown;
+    prevUnitElapsedTime: number;
+    resolve(result: unknown): void;
+    reject(reason: unknown): void;
+}
+
 interface Unit<T = void> {
     (prevValue?: T): T extends void?
         {
@@ -14,20 +32,9 @@ interface Unit<T = void> {
 
 type NextUnit<T> = Unit<T> | null;
 
-interface Task<T> {
-    run(): Promise<T>;
-    abort(): void;
-}
-
-interface TaskOptions<T> {
-    unit: Unit<T>;
-    chunkBudget?: number;
-    chunkScheduler?: ChunkSchedulerType;
-}
-
 export {
-    Unit,
-    NextUnit,
+    Scheduler,
+    SchedulerOptions,
     Task,
-    TaskOptions
+    Unit
 };
