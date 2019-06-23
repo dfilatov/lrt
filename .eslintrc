@@ -5,6 +5,7 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
+        "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
         "@typescript-eslint/generic-type-naming": ["error", "^T([A-Z][a-zA-Z]+)?$"],
         "@typescript-eslint/type-annotation-spacing": "error",
         "array-bracket-spacing": "error",
