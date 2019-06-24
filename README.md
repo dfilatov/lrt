@@ -94,7 +94,7 @@ More likely this means that chunk budget is too small or you need to split your 
 
 **Why not just move long-running task into Web Worker?**
 
-Despite the fact that Web Workers are very useful, they do have a cost: time to instantiate/terminate workers, message latency on large workloads, need for coordination between threads, lack of access the DOM. Nevertheless, you can use LRT inside Web Worker and get the best of both worlds: do not affect main thread and have ability to be aborted.
+Despite the fact that Web Workers are very useful, they do have a cost: time to instantiate/terminate workers, message latency on large workloads, need for coordination between threads, lack of access the DOM. Nevertheless, you can use LRT inside Web Worker and get the best of both worlds: do not affect main thread and have ability to abort outdated tasks.
 
 ## Example
 ```ts
