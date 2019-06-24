@@ -4,38 +4,21 @@ import { idleCallbackChunkScheduler } from './idleCallback';
 import { immediateChunkScheduler } from './immediate';
 import { timeoutChunkScheduler } from './timeout';
 
+const BUILTIN_CHUNK_SHEDULERS: Record<Exclude<ChunkSchedulerType, ChunkScheduler>, ChunkScheduler | null> = {
+    auto:
+        idleCallbackChunkScheduler ||
+        animationFrameChunkScheduler ||
+        immediateChunkScheduler,
+    animationFrame: animationFrameChunkScheduler,
+    idleCallback: idleCallbackChunkScheduler,
+    immediate: immediateChunkScheduler,
+    timeout: timeoutChunkScheduler
+};
+
 function getChunkScheduler(type: ChunkSchedulerType): ChunkScheduler {
-    let chunkScheduler: ChunkScheduler | null = null;
-
-    switch(type) {
-        case 'animationFrame':
-            chunkScheduler = animationFrameChunkScheduler;
-            break;
-
-        case 'idleCallback':
-            chunkScheduler = idleCallbackChunkScheduler;
-            break;
-
-        case 'immediate':
-            chunkScheduler = immediateChunkScheduler;
-            break;
-
-        case 'timeout':
-            chunkScheduler = timeoutChunkScheduler;
-            break;
-
-        case 'auto':
-            chunkScheduler =
-                idleCallbackChunkScheduler ||
-                animationFrameChunkScheduler ||
-                immediateChunkScheduler;
-            break;
-
-        default:
-            chunkScheduler = type;
-    }
-
-    return chunkScheduler || timeoutChunkScheduler;
+    return typeof type === 'string' ?
+        BUILTIN_CHUNK_SHEDULERS[type] || timeoutChunkScheduler :
+        type;
 }
 
 export {
