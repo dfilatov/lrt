@@ -99,11 +99,11 @@ function doPartOfTask1(i) {
     return i + 1;
 }
 
-// Imitate a part of another long-running task taking 50ms in the whole
+// Imitate a part of another long-running task taking 100ms in the whole
 function doPartOfTask2(i) {
     const startTime = Date.now();
 
-    while(Date.now() - startTime < 8) {}
+    while(Date.now() - startTime < 5) {}
 
     return i + 1;
 }
