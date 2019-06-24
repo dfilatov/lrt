@@ -34,8 +34,11 @@ Returned `scheduler` has two methods:
   * `const task = runTask(unit)` runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively
   * `abortTask(task)` aborts task execution as soon as possible (see diagram above)
   
+### Scheduler
+Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize utilization of chunk time.
+  
 ### Unit of work
-"Unit of work" is represented with a function doing current part of task and returning an object with the following properties:
+Unit of work is represented with a function doing current part of task and returning an object with the following properties:
   * `next` (required) pointing to the next unit of work or equal to `null` if the current unit is last and task is completed
   * `result` (optional) result 
   
