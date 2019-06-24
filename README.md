@@ -6,6 +6,16 @@ LRT (stands for Long-running task) is a minimal library for "chunkifying" long-r
 
 <img width="1333" alt="LRT" src="https://user-images.githubusercontent.com/67957/59981416-a5160080-960b-11e9-8735-04527f2694ce.png">
 
+## Table of Contents
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [API](#api)
+    * [Scheduler](#scheduler)
+    * [Unit of work](#unit-of-work)
+    * [Chunk scheduler](#chunk-scheduler)
+  * [Questions and answers](#questions-and-answers)
+  * [Example](#example)
+
 ## Installation
 ```
 $ npm install lrt
@@ -86,7 +96,7 @@ More likely this means that chunk budget is too small or you need to split your 
 
 Despite the fact that Web Workers are very useful, they do have a cost: time to instantiate/terminate workers, message latency on large workloads, need for coordination between threads, lack of access the DOM. Nevertheless, you can use LRT inside Web Worker and get the best of both worlds: do not affect main thread and have ability to be aborted.
 
-## Full example
+## Example
 ```ts
 import { createScheduler } from 'lrt';
 
