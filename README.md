@@ -35,7 +35,7 @@ Returned `scheduler` has two methods:
   * `abortTask(task)` aborts task execution as soon as possible (see diagram above)
   
 ### Scheduler
-Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize utilization of chunk time.
+Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
   
 ### Unit of work
 Unit of work is represented with a function doing current part of task and returning an object with the following properties:
