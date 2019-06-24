@@ -41,8 +41,8 @@ const scheduler = createScheduler(options);
   * `options.chunkScheduler` (optional, default is `'auto'`) a [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
 
 Returned `scheduler` has two methods:
-  * `const task = runTask(unit)` runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively
-  * `abortTask(task)` aborts task execution as soon as possible (see diagram above)
+  * `const task = scheduler.runTask(unit)` runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively
+  * `scheduler.abortTask(task)` aborts task execution as soon as possible (see diagram above)
   
 ### Scheduler
 Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
