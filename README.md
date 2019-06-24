@@ -27,7 +27,7 @@ const { createScheduler } = require('lrt');
 const scheduler = createScheduler(options);
 ```
   * `options` (optional)
-  * `options.chunkBudget` (optional, default is `12`) an execution budget of chunk in milliseconds
+  * `options.chunkBudget` (optional, default is `10`) an execution budget of chunk in milliseconds
   * `options.chunkScheduler` (optional, default is `'auto'`) a [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
 
 Returned `scheduler` has two methods:
