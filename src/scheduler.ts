@@ -83,6 +83,7 @@ function createScheduler({
             pendingTasks.set(promise, task!);
 
             microtask(() => {
+                // check if it's not already aborted
                 if(!pendingTasks.has(promise)) {
                     return;
                 }
@@ -101,6 +102,8 @@ function createScheduler({
             if(pendingTasks.delete(promise)) {
                 const taskOrderIdx = tasksOrder.indexOf(promise);
 
+                // task can be absent if it's added to pending tasks via `runTask` but then
+                // `abortTask` is called synchronously before microtask callback is invoked
                 if(taskOrderIdx > -1) {
                     tasksOrder.splice(taskOrderIdx, 1);
 
