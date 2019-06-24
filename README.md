@@ -10,7 +10,7 @@ LRT (stands for Long-running task) is a minimal library for "chunkifying" long-r
 ```
 $ npm install lrt
 ```
-Note: LRT requires native `Promise` api so if your environment doesn't support them, you will have to install any suitable polyfill as well.
+**Note**: LRT requires native [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) and [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) so if your environment doesn't support them, you will have to install any suitable polyfills as well.
 
 ## Usage
 ```ts
