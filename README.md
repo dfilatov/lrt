@@ -2,8 +2,7 @@
 [![Build Status](https://img.shields.io/travis/dfilatov/lrt/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/lrt/branches)
 [![NPM Version](https://img.shields.io/npm/v/lrt.svg?style=flat-square)](https://www.npmjs.com/package/lrt)
 
-LRT (stands for Long-running task) is a minimal library for "chunkifying" long-running tasks with ability to be aborted.
-The main idea is to split such long-running task into small units of work joined into chunks with limited budget of execution time. Units of works are executed synchronously until budget of current chunk is reached, after that thread is unblocked until scheduler executes next chunk and so on.
+LRT (stands for Long-running task) is a minimal library for "chunkifying" long-running tasks with ability being aborted and coordinating their execution with cooperative scheduling. The main idea is to split such long-running tasks into small units of work joined into chunks with limited budget of execution time. Units of works are executed synchronously until budget of current chunk is reached, after that thread is unblocked until scheduler executes next chunk and so on until all tasks have been completed.
 
 <img width="1333" alt="LRT" src="https://user-images.githubusercontent.com/67957/59981416-a5160080-960b-11e9-8735-04527f2694ce.png">
 
@@ -16,24 +15,24 @@ Note: LRT requires native `Promise` api so if your environment doesn't support t
 ## Usage
 ```ts
 // with ES6 modules
-import { createTask } from 'lrt';
+import { createScheduler } from 'lrt';
 
 // with CommonJS modules
-const { createTask } = require('lrt');
+const { createScheduler } = require('lrt');
 ```
 
 ## API
 
 ```ts
-const task = createTask(options);
+const scheduler = createScheduler(options);
 ```
-  * `options.unit` (required) a [unit of work](#unit-of-work)
+  * `options` (optional)
   * `options.chunkBudget` (optional, default is `12`) an execution budget of chunk in milliseconds
   * `options.chunkScheduler` (optional, default is `'auto'`) a [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
 
-Returned `task` has only two methods:
-  * `task.run()` returns promise resolved or rejected after task has completed or thrown an error respectively
-  * `task.abort()` aborts task execution as soon as possible (see diagram above)
+Returned `scheduler` has two methods:
+  * `const task = runTask(unit)` runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively
+  * `abortTask(task)` aborts task execution as soon as possible (see diagram above)
   
 ### Unit of work
 "Unit of work" is represented with a function doing current part of task and returning an object with the following properties:
@@ -69,8 +68,7 @@ const customChunkScheduler = {
     cancel: token => clearTimeout(token)
 };
 
-const task = createTask({
-    unit,
+const scheduler = createScheduler({
     chunkScheduler: customChunkScheduler
 });
 ```
@@ -79,7 +77,7 @@ const task = createTask({
 
 **What if unit takes more time than chunk budget?**
 
-Generally this means that chunk budget is too small or you need to split your task into smaller units. Anyway LRT guarantees  at least one of units is executed within each chunk. 
+More likely this means that chunk budget is too small or you need to split your tasks into smaller units. Anyway LRT guarantees  at least one of units of some task will be executed within each chunk. 
 
 **Why not just move long-running task into Web Worker?**
 
@@ -87,42 +85,57 @@ Despite the fact that Web Workers are very useful, they do have a cost: time to 
 
 ## Full example
 ```ts
-import { createTask } from 'lrt';
+import { createScheduler } from 'lrt';
 
-// Imitate a part of long-running task taking 80ms in the whole
-function doPartOfTask(i) {
+// Create scheduler
+const scheduler = createScheduler();
+
+// Imitate a part of some long-running task taking 80ms in the whole
+function doPartOfTask1(i) {
     const startTime = Date.now();
 
-    while(Date.now() - startTime < 8);
+    while(Date.now() - startTime < 8) {}
 
     return i + 1;
 }
 
-// Define unit of work
-const unit = (prevResult = 0) => {
-    const result = doPartOfTask(prevResult);
+// Imitate a part of another long-running task taking 50ms in the whole
+function doPartOfTask2(i) {
+    const startTime = Date.now();
+
+    while(Date.now() - startTime < 8) {}
+
+    return i + 1;
+}
+
+// Run both tasks concurrenly
+const task1 = scheduler.runTask(function unit1(prevResult = 0) {
+    const result = doPartOfTask1(prevResult);
 
     return {
-        next: result < 10 ? unit : null, // 10 units will be executed
+        next: result < 10 ? unit1 : null, // 10 units will be executed
         result
     };
-};
+});
 
-// Create task
-const task = createTask({ unit });
+const task2 = scheduler.runTask(function unit2(prevResult = 0) {
+    const result = doPartOfTask2(prevResult);
 
-// Run task
-const promise = task.run();
+    return {
+        next: result < 20 ? unit2 : null, // 20 units will be executed
+        result
+    };
+});
 
-// Wait until task has been completed
-promise.then(
+// Wait until first task has been completed
+task1.then(
     result => {
-        console.log(result); //
+        console.log(result); // prints "10"
     },
     err => {
         console.error(err);
     });
 
-// Abort task at any time, next chunk of units won't be executed
-setTimeout(task.abort, 50);
+// Abort second task in 50 ms, it won't be completed
+setTimeout(() => scheduler.abortTask(task2), 50);
 ```
