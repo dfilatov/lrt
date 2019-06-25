@@ -79,7 +79,7 @@ const iterator = {
     }
 };
 ```
-For convenience LRT passes a previous value as an argument to the `next` method. The first `next` call of doesn't obtain this argument and default value can be specified as an initial one.
+For convenience LRT passes a previous value as an argument to the `next` method. The first `next` call doesn't obtain this argument and default value can be specified as an initial one.
 
 ### Chunk scheduler
 Chunk scheduler is utilized internally to schedule execution of the next chunk of units. Built-in options:
