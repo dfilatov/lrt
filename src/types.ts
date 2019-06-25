@@ -10,9 +10,9 @@ interface SchedulerOptions {
     chunkBudget?: number;
 }
 
-interface Task {
-    nextUnit: Unit<unknown>;
-    prevUnitResult: unknown;
+interface Task<T = void> {
+    nextUnit: Unit<T>;
+    prevUnitResult: T | undefined;
     prevUnitElapsedTime: number;
     resolve(result: unknown): void;
     reject(reason: unknown): void;

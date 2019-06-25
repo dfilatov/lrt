@@ -6,7 +6,7 @@ function createScheduler({
     chunkScheduler: chunkSchedulerType = 'auto',
     chunkBudget = 10
 }: SchedulerOptions = {}): Scheduler {
-    const pendingTasks = new Map<Promise<unknown>, Task>();
+    const pendingTasks = new Map<Promise<unknown>, Task<unknown>>();
     const chunkScheduler = getChunkScheduler(chunkSchedulerType);
     let chunkSchedulerToken: unknown = null;
     let tasksOrder: Promise<unknown>[] = [];
@@ -69,10 +69,10 @@ function createScheduler({
 
     return {
         runTask<T = void>(unit: Unit<T>): Promise<T> {
-            let task: Task;
+            let task: Task<T>;
             const promise = new Promise<T>((resolve, reject) => {
                 task = {
-                    nextUnit: <Unit<unknown>>unit,
+                    nextUnit: unit,
                     prevUnitResult: undefined,
                     prevUnitElapsedTime: 0,
                     resolve,
@@ -80,7 +80,7 @@ function createScheduler({
                 };
             });
 
-            pendingTasks.set(promise, task!);
+            pendingTasks.set(promise, <Task<unknown>>task!);
 
             microtask(() => {
                 // check if it's not already aborted
@@ -95,7 +95,7 @@ function createScheduler({
                 }
             });
 
-            return <Promise<T>>promise;
+            return promise;
         },
 
         abortTask(promise: Promise<unknown>): void {
