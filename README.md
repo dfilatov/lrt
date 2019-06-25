@@ -11,7 +11,7 @@ LRT (stands for Long-running task) is a minimal library for "chunkifying" long-r
   * [Usage](#usage)
   * [API](#api)
     * [Scheduler](#scheduler)
-    * [Unit of work](#unit-of-work)
+    * [Iterator](#iterator)
     * [Chunk scheduler](#chunk-scheduler)
   * [Questions and answers](#questions-and-answers)
   * [Example](#example)
@@ -41,30 +41,45 @@ const scheduler = createScheduler(options);
   * `options.chunkScheduler` (optional, default is `'auto'`) A [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler.
 
 Returned `scheduler` has two methods:
-  * `const task = scheduler.runTask(unit)` Runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively.
+  * `const task = scheduler.runTask(iterator)` Runs task with a given [iterator](#iterator) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively.
   * `scheduler.abortTask(task)` Aborts task execution as soon as possible (see diagram above).
   
 ### Scheduler
 Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
   
-### Unit of work
-Unit of work is represented with a function doing current part of task and returning an object with the following properties:
-  * `next` (required) pointing to the next unit of work or equal to `null` if the current unit is last and task is completed
-  * `result` (optional) result 
-  
-If the previous unit returns `result`, it will be passed as an argument to the next unit. First unit doesn't obtain this argument and default value can be specified as an initial one.
-  
-Example:
+### Iterator
+Iterator should be an object implementing [Iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol). The most convenient way to build iterator is to use generators (calling a generator function returns a generator object implementing iterator protocol). Another option is to build your own object implementing iterator protocol.
+
+Example with generator:
 ```ts
-const unit = (previousResult = 0) => {
-    const result = doCurrentPartOfTask(prevResult);
+function *generator() {
+    let i;
     
-    return {
-        next: unit, // or null if task is completed
-        result
-    };
+    while(i < 10) {
+        doCurrentPartOfTask(i++);
+        yield;
+    }
+    
+    return i;
+}
+
+const iterator = generator();
+```
+
+Example with object implementing iterator protocol:
+```ts
+const iterator = {
+    next(i = 0) {
+        doCurrentPartOfTask(i);
+        
+        return {
+            done: i < 10,
+            value: i + 1
+        };
+    }
 };
 ```
+For convenience LRT passes a previous value as an argument to the `next` method. The first `next` call of doesn't obtain this argument and default value can be specified as an initial one.
 
 ### Chunk scheduler
 Chunk scheduler is utilized internally to schedule execution of the next chunk of units. Built-in options:
@@ -106,47 +121,50 @@ Despite the fact that Web Workers are very useful, they do have a cost: time to 
 
 ## Example
 ```ts
-import { createScheduler } from 'lrt';
-
 // Create scheduler
 const scheduler = createScheduler();
 
 // Imitate a part of some long-running task taking 80ms in the whole
-function doPartOfTask1(i) {
+function doPartOfTask1() {
     const startTime = Date.now();
 
     while(Date.now() - startTime < 8) {}
-
-    return i + 1;
 }
 
 // Imitate a part of another long-running task taking 100ms in the whole
-function doPartOfTask2(i) {
+function doPartOfTask2() {
     const startTime = Date.now();
 
     while(Date.now() - startTime < 5) {}
+}
 
-    return i + 1;
+function *task1Generator() {
+    let i = 0;
+
+    while(i < 10) { // 10 units will be executed
+        doPartOfTask1();
+        i++;
+        yield;
+    }
+
+    return i;
+}
+
+function *task2Generator() {
+    let i = 0;
+
+    while(i < 20) { // 20 units will be executed
+        doPartOfTask2();
+        i++;
+        yield;
+    }
+
+    return i;
 }
 
 // Run both tasks concurrenly
-const task1 = scheduler.runTask(function unit1(prevResult = 0) {
-    const result = doPartOfTask1(prevResult);
-
-    return {
-        next: result < 10 ? unit1 : null, // 10 units will be executed
-        result
-    };
-});
-
-const task2 = scheduler.runTask(function unit2(prevResult = 0) {
-    const result = doPartOfTask2(prevResult);
-
-    return {
-        next: result < 20 ? unit2 : null, // 20 units will be executed
-        result
-    };
-});
+const task1 = scheduler.runTask(task1Generator());
+const task2 = scheduler.runTask(task2Generator());
 
 // Wait until first task has been completed
 task1.then(

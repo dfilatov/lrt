@@ -1,6 +1,6 @@
 import { getChunkScheduler } from './chunkSchedulers';
 import { now, microtask } from './utils';
-import { Scheduler, SchedulerOptions, Task, Unit } from './types';
+import { Scheduler, SchedulerOptions, Task } from './types';
 
 function createScheduler({
     chunkScheduler: chunkSchedulerType = 'auto',
@@ -22,25 +22,24 @@ function createScheduler({
         while(tasksOrder.length > 0) {
             const promise = tasksOrder.shift()!;
             const task = pendingTasks.get(promise)!;
-            let unitExecuted = false;
+            let iterated = false;
 
-            if(checkBudget && restBudget < task.meanUnitElapsedTime) {
+            if(checkBudget && restBudget < task.meanIterationElapsedTime) {
                 nextTasksOrder.push(promise);
             }
             else {
                 checkBudget = true;
 
                 try {
-                    const { next, result } = task.nextUnit!(task.result);
+                    const { value, done } = task.iterator.next(task.value);
 
-                    unitExecuted = true;
+                    iterated = true;
 
-                    task.nextUnit = next;
-                    task.result = result;
+                    task.value = value;
 
-                    if(next === null) {
+                    if(done) {
                         pendingTasks.delete(promise);
-                        task.resolve(result);
+                        task.resolve(value);
                     }
                     else {
                         tasksOrder.push(promise);
@@ -54,10 +53,10 @@ function createScheduler({
 
             const elapsedTime = now() - startTime;
 
-            if(unitExecuted) {
-                task.executedUnitCount++;
+            if(iterated) {
+                task.iterationCount++;
                 task.totalElapsedTime += elapsedTime;
-                task.meanUnitElapsedTime = task.totalElapsedTime / task.executedUnitCount;
+                task.meanIterationElapsedTime = task.totalElapsedTime / task.iterationCount;
             }
 
             restBudget -= elapsedTime;
@@ -71,15 +70,15 @@ function createScheduler({
     }
 
     return {
-        runTask<T = void>(unit: Unit<T>): Promise<T> {
+        runTask<T = void>(iterator: Iterator<T>): Promise<T> {
             let task: Task<T>;
             const promise = new Promise<T>((resolve, reject) => {
                 task = {
-                    nextUnit: unit,
-                    result: undefined,
-                    executedUnitCount: 0,
+                    value: undefined,
+                    iterator,
+                    iterationCount: 0,
+                    meanIterationElapsedTime: 0,
                     totalElapsedTime: 0,
-                    meanUnitElapsedTime: 0,
                     resolve,
                     reject
                 };
