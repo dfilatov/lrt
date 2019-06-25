@@ -3,28 +3,32 @@ import { now } from '../src/utils';
 
 describe('runTask', () => {
     it('should fulfill promise with result after task has completed', done => {
-        createScheduler().runTask(function unit(i: number = 0) {
-            sleep(10);
+        createScheduler().runTask((function *() {
+            let i = 0;
 
-            return {
-                next: i < 9 ? unit : null,
-                result: i + 1
-            };
-        }).then(result => {
+            while(i++ < 9) {
+                sleep(10);
+                yield;
+            }
+
+            return i;
+        })()).then(result => {
             expect(result).toBe(10);
             done();
         });
     });
 
-    it('should complete task even its unit takes more time than budget', done => {
-        createScheduler({ chunkBudget: 5 }).runTask(function unit(i: number = 0) {
-            sleep(10);
+    it('should complete task even its iteration takes more time than budget', done => {
+        createScheduler({ chunkBudget: 5 }).runTask((function *() {
+            let i = 0;
 
-            return {
-                next: i < 9 ? unit : null,
-                result: i + 1
-            };
-        }).then(result => {
+            while(i++ < 9) {
+                sleep(10);
+                yield;
+            }
+
+            return i;
+        })()).then(result => {
             expect(result).toBe(10);
             done();
         });
@@ -35,24 +39,30 @@ describe('runTask', () => {
         const order: string[] = [];
 
         Promise.all([
-            scheduler.runTask(function unit1(i: number = 0) {
-                sleep(10);
-                order.push('unit1');
+            scheduler.runTask((function *() {
+                let i = 0;
 
-                return {
-                    next: i < 4 ? unit1 : null,
-                    result: i + 1
-                };
-            }),
-            scheduler.runTask(function unit2(i: number = 0) {
-                sleep(10);
-                order.push('unit2');
+                while(i < 5) {
+                    sleep(10);
+                    order.push('unit1');
+                    i++;
+                    yield;
+                }
 
-                return {
-                    next: i < 8 ? unit2 : null,
-                    result: i + 2
-                };
-            })
+                return i;
+            })()),
+            scheduler.runTask((function *() {
+                let i = 0;
+
+                while(i < 9) {
+                    sleep(10);
+                    order.push('unit2');
+                    i += 2;
+                    yield;
+                }
+
+                return i;
+            })()),
         ]).then(([result1, result2]) => {
             expect(order)
                 .toEqual(['unit1', 'unit2', 'unit1', 'unit2', 'unit1', 'unit2', 'unit1', 'unit2', 'unit1', 'unit2']);
@@ -65,18 +75,21 @@ describe('runTask', () => {
     it('should reject promise if unit throws exception', done => {
         const err = new Error();
 
-        createScheduler().runTask(function unit(i: number = 0) {
-            sleep(10);
+        createScheduler().runTask((function *() {
+            let i = 0;
 
-            if(i > 4) {
-                throw err;
+            while(i < 9) {
+                sleep(10);
+
+                if(i++ > 4) {
+                    throw err;
+                }
+
+                yield;
             }
 
-            return {
-                next: unit,
-                result: i + 1
-            };
-        }).catch(_err => {
+            return i;
+        })()).catch(_err => {
             expect(_err).toBe(err);
             done();
         });
@@ -86,14 +99,16 @@ describe('runTask', () => {
 describe('abortTask', () => {
     it('should be aborted after a while', done => {
         const scheduler = createScheduler();
-        const task = scheduler.runTask(function unit(i: number = 0) {
-            sleep(10);
+        const task = scheduler.runTask((function *() {
+            let i = 0;
 
-            return {
-                next: i < 9 ? unit : null,
-                result: i + 1
-            };
-        });
+            while(i++ < 9) {
+                sleep(10);
+                yield;
+            }
+
+            return i;
+        })());
 
         task.then(
             () => {
@@ -110,7 +125,9 @@ describe('abortTask', () => {
 
     it('should be aborted immediately', done => {
         const scheduler = createScheduler();
-        const task = scheduler.runTask(() => ({ next: null }));
+        const task = scheduler.runTask((function *() {
+            return true;
+        })());
 
         task.then(
             () => {
@@ -128,24 +145,37 @@ describe('abortTask', () => {
 
     it('should not affect other pending tasks', done => {
         const scheduler = createScheduler();
-        const task1 = scheduler.runTask(function unit(i: number = 0) {
-            sleep(10);
+        const task1 = scheduler.runTask((function *() {
+            let i = 0;
 
-            return {
-                next: i < 9 ? unit : null,
-                result: i + 1
-            };
-        });
-        const task2 = scheduler.runTask(function unit(i: number = 0) {
-            sleep(10);
+            while(i++ < 5) {
+                sleep(10);
+                yield;
+            }
 
-            return {
-                next: i < 9 ? unit : null,
-                result: i + 1
-            };
-        });
+            return i;
+        })());
+        const task2 = scheduler.runTask((function *() {
+            let i = 0;
+
+            while(i++ < 9) {
+                sleep(10);
+                yield;
+            }
+
+            return i;
+        })());
 
         scheduler.abortTask(task1);
+
+        task1.then(
+            () => {
+                done('Aborted task mustn\'t be completed');
+            },
+            () => {
+                done('Aborted task mustn\'t be rejected');
+            }
+        );
 
         task2.then(result => {
             expect(result).toBe(10);
