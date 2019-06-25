@@ -52,7 +52,7 @@ Iterator should be an object implementing [Iterator protocol](https://developer.
 
 Example with generator:
 ```ts
-function *generator() {
+function* generator() {
     let i;
     
     while(i < 10) {
@@ -138,7 +138,7 @@ function doPartOfTask2() {
     while(Date.now() - startTime < 5) {}
 }
 
-function *task1Generator() {
+function* task1Generator() {
     let i = 0;
 
     while(i < 10) { // 10 units will be executed
@@ -150,7 +150,7 @@ function *task1Generator() {
     return i;
 }
 
-function *task2Generator() {
+function* task2Generator() {
     let i = 0;
 
     while(i < 20) { // 20 units will be executed
