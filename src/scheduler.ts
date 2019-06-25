@@ -22,26 +22,27 @@ function createScheduler({
         while(tasksOrder.length > 0) {
             const promise = tasksOrder.shift()!;
             const task = pendingTasks.get(promise)!;
-            let taskExecuted = false;
+            let unitExecuted = false;
 
-            if(checkBudget && restBudget < task.prevUnitElapsedTime) {
+            if(checkBudget && restBudget < task.meanUnitElapsedTime) {
                 nextTasksOrder.push(promise);
             }
             else {
                 checkBudget = true;
 
                 try {
-                    const { next: nextUnit, result } = task.nextUnit(task.prevUnitResult);
+                    const { next, result } = task.nextUnit!(task.result);
 
-                    taskExecuted = true;
+                    unitExecuted = true;
 
-                    if(nextUnit === null) {
+                    task.nextUnit = next;
+                    task.result = result;
+
+                    if(next === null) {
                         pendingTasks.delete(promise);
                         task.resolve(result);
                     }
                     else {
-                        task.nextUnit = nextUnit;
-                        task.prevUnitResult = result;
                         tasksOrder.push(promise);
                     }
                 }
@@ -53,8 +54,10 @@ function createScheduler({
 
             const elapsedTime = now() - startTime;
 
-            if(taskExecuted) {
-                task.prevUnitElapsedTime = elapsedTime;
+            if(unitExecuted) {
+                task.executedUnitCount++;
+                task.totalElapsedTime += elapsedTime;
+                task.meanUnitElapsedTime = task.totalElapsedTime / task.executedUnitCount;
             }
 
             restBudget -= elapsedTime;
@@ -73,8 +76,10 @@ function createScheduler({
             const promise = new Promise<T>((resolve, reject) => {
                 task = {
                     nextUnit: unit,
-                    prevUnitResult: undefined,
-                    prevUnitElapsedTime: 0,
+                    result: undefined,
+                    executedUnitCount: 0,
+                    totalElapsedTime: 0,
+                    meanUnitElapsedTime: 0,
                     resolve,
                     reject
                 };
