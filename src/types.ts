@@ -11,9 +11,11 @@ interface SchedulerOptions {
 }
 
 interface Task<T = void> {
-    nextUnit: Unit<T>;
-    prevUnitResult: T | undefined;
-    prevUnitElapsedTime: number;
+    result: T | undefined;
+    nextUnit: NextUnit<T>;
+    executedUnitCount: number;
+    meanUnitElapsedTime: number;
+    totalElapsedTime: number;
     resolve(result: unknown): void;
     reject(reason: unknown): void;
 }
