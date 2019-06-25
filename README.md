@@ -37,12 +37,12 @@ const { createScheduler } = require('lrt');
 const scheduler = createScheduler(options);
 ```
   * `options` (optional)
-  * `options.chunkBudget` (optional, default is `10`) an execution budget of chunk in milliseconds
-  * `options.chunkScheduler` (optional, default is `'auto'`) a [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler
+  * `options.chunkBudget` (optional, default is `10`) An execution budget of chunk in milliseconds.
+  * `options.chunkScheduler` (optional, default is `'auto'`) A [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler.
 
 Returned `scheduler` has two methods:
-  * `const task = scheduler.runTask(unit)` runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively
-  * `scheduler.abortTask(task)` aborts task execution as soon as possible (see diagram above)
+  * `const task = scheduler.runTask(unit)` Runs task with a given [unit of work](#unit-of-work) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively.
+  * `scheduler.abortTask(task)` Aborts task execution as soon as possible (see diagram above).
   
 ### Scheduler
 Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
@@ -67,12 +67,20 @@ const unit = (previousResult = 0) => {
 ```
 
 ### Chunk scheduler
-Chunk scheduler is utilized internally to schedule execution of the next chunk of units. By default (without specifying corresponding option) LRT tries to detect the best available option for the current environment. In browsers any of `requestIdleCallback` or `requestAnimationFrame` will be used depending on their availability, or `setImmediate` inside NodeJS. If nothing suitable is available then regular `setTimeout` is used as a fallback. Also you can pass your own implementation of scheduler.
+Chunk scheduler is utilized internally to schedule execution of the next chunk of units. Built-in options:
+  * `'auto'` (by default) LRT will try to detect the best available option for your current environment.
+In browsers any of `'idleCallback'` or `'animationFrame'` option will be used depending on their availability, or `'immediate'` inside NodeJS. If nothing suitable is available, `'timeout'` option will be used as a fallback.
+  * `'idleCallback'` LRT will try to use [Background Tasks API](https://developer.mozilla.org/en-US/docs/Web/API/Background_Tasks_API). If it's not available, `'timeout'` option will be used as a fallback.
+  * `'animationFrame'` LRT will try to use [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame). If your tasks need to change the DOM, you should use it instead `'auto'` or `'idleCallback'`. If it's not available, `'timeout'` option will be used as a fallback.
+  * `'immediate'` LRT will try to use [setImmediate](https://developer.mozilla.org/en-US/docs/Web/API/Window/setImmediate). If it's not available, `'timeout'` option will be used as a fallback.
+  * `'timeout'` LRT will use [setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) with zero delay.
+  
+Also you can specify your own implementation of scheduler.
 
 #### Custom chunk scheduler
 Custom scheduler should implement two methods:
-  * `request(fn)` (required) accepts function `fn` and returns `token` for possible aborting via `clear` method (if it is specified)
-  * `cancel(token)` (optional) accepts `token` and cancels scheduling
+  * `request(fn)` (required) Accepts function `fn` and returns `token` for possible aborting via `clear` method (if it is specified)
+  * `cancel(token)` (optional) Accepts `token` and cancels scheduling
   
 For example, let's implement scheduler which runs next chunk of units in ~100 milliseconds after previous chunk has ended
 ```ts
