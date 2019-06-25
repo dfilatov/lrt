@@ -3,7 +3,7 @@ import { now } from '../src/utils';
 
 describe('runTask', () => {
     it('should fulfill promise with result after task has completed', done => {
-        createScheduler().runTask((function *() {
+        createScheduler().runTask((function*() {
             let i = 0;
 
             while(i++ < 9) {
@@ -19,7 +19,7 @@ describe('runTask', () => {
     });
 
     it('should complete task even its iteration takes more time than budget', done => {
-        createScheduler({ chunkBudget: 5 }).runTask((function *() {
+        createScheduler({ chunkBudget: 5 }).runTask((function*() {
             let i = 0;
 
             while(i++ < 9) {
@@ -39,7 +39,7 @@ describe('runTask', () => {
         const order: string[] = [];
 
         Promise.all([
-            scheduler.runTask((function *() {
+            scheduler.runTask((function*() {
                 let i = 0;
 
                 while(i < 5) {
@@ -51,7 +51,7 @@ describe('runTask', () => {
 
                 return i;
             })()),
-            scheduler.runTask((function *() {
+            scheduler.runTask((function*() {
                 let i = 0;
 
                 while(i < 9) {
@@ -75,7 +75,7 @@ describe('runTask', () => {
     it('should reject promise if unit throws exception', done => {
         const err = new Error();
 
-        createScheduler().runTask((function *() {
+        createScheduler().runTask((function*() {
             let i = 0;
 
             while(i < 9) {
@@ -99,7 +99,7 @@ describe('runTask', () => {
 describe('abortTask', () => {
     it('should be aborted after a while', done => {
         const scheduler = createScheduler();
-        const task = scheduler.runTask((function *() {
+        const task = scheduler.runTask((function*() {
             let i = 0;
 
             while(i++ < 9) {
@@ -125,7 +125,8 @@ describe('abortTask', () => {
 
     it('should be aborted immediately', done => {
         const scheduler = createScheduler();
-        const task = scheduler.runTask((function *() {
+        const task = scheduler.runTask((function*() {
+            yield;
             return true;
         })());
 
@@ -145,7 +146,7 @@ describe('abortTask', () => {
 
     it('should not affect other pending tasks', done => {
         const scheduler = createScheduler();
-        const task1 = scheduler.runTask((function *() {
+        const task1 = scheduler.runTask((function*() {
             let i = 0;
 
             while(i++ < 5) {
@@ -155,7 +156,7 @@ describe('abortTask', () => {
 
             return i;
         })());
-        const task2 = scheduler.runTask((function *() {
+        const task2 = scheduler.runTask((function*() {
             let i = 0;
 
             while(i++ < 9) {
