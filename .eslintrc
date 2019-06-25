@@ -1,16 +1,21 @@
 {
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "project": "./tsconfig.json",
         "sourceType": "module"
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
+        "@typescript-eslint/array-type": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
         "@typescript-eslint/generic-type-naming": ["error", "^T([A-Z][a-zA-Z]+)?$"],
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-unnecessary-type-assertion" : "error",
         "@typescript-eslint/type-annotation-spacing": "error",
         "array-bracket-spacing": "error",
         "arrow-spacing": "error",
         "block-spacing": "error",
+        "camelcase": "error",
         "curly": "error",
         "func-call-spacing": "error",
         "indent": ["error", 4, { "SwitchCase": 1 }],
