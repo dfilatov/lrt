@@ -2,7 +2,7 @@
 [![Build Status](https://img.shields.io/travis/dfilatov/lrt/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/lrt/branches)
 [![NPM Version](https://img.shields.io/npm/v/lrt.svg?style=flat-square)](https://www.npmjs.com/package/lrt)
 
-LRT (stands for Long-running task) is a minimalistic library for "chunkifying" long-running tasks.
+LRT (stands for Long-running task) is a minimalistic library for "chunkifying" long-running tasks inside browsers and Node.JS.
 
 ## Key features
 
@@ -186,7 +186,8 @@ task1.then(
     },
     err => {
         console.error(err);
-    });
+    }
+);
 
 // Abort second task in 50 ms, it won't be completed
 setTimeout(() => scheduler.abortTask(task2), 50);
