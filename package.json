@@ -33,7 +33,7 @@
   "types": "lib/types/index.d.ts",
   "scripts": {
     "build": "rm -rf lib && npx rollup -c",
-    "lint": "npx tsc --noEmit && npx eslint .",
+    "lint": "npx tsc --noEmit && npx eslint --ext ts src __tests__",
     "postpublish": "git push --no-verify && git push --no-verify --tags",
     "prepublishOnly": "npm run build",
     "test": "npx jest"
