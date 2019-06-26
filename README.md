@@ -2,7 +2,18 @@
 [![Build Status](https://img.shields.io/travis/dfilatov/lrt/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/lrt/branches)
 [![NPM Version](https://img.shields.io/npm/v/lrt.svg?style=flat-square)](https://www.npmjs.com/package/lrt)
 
-LRT (stands for Long-running task) is a minimalistic library for "chunkifying" long-running tasks (with ability to abort outdated tasks) and coordinating their execution with cooperative scheduling. The main idea is to split such long-running tasks into small units of work joined into chunks with limited budget of execution time. Units of works are executed synchronously until budget of current chunk is reached, afterwards thread is unblocked until scheduler executes next chunk and so on until all tasks have been completed.
+LRT (stands for Long-running task) is a minimalistic library for "chunkifying" long-running tasks.
+
+## Key features
+
+  * Ability to run multiple long-running tasks simultaneously and coordinate their execution with coopeative scheduling
+  * Ability to abort outdated tasks
+  * Ability to specify chunk budget and maximize its utilization
+  * Built-in set of predefined chunk schedulers
+  * Ability to implement custom chunk scheduler
+  * Support of generators for tasks splitting
+
+The main idea is to split long-running tasks into small units of work joined into chunks with limited budget of execution time. Units of works are executed synchronously until budget of current chunk is reached, afterwards thread is unblocked until scheduler executes next chunk and so on until all tasks have been completed.
 
 <img width="1334" alt="LRT" src="https://user-images.githubusercontent.com/67957/60046180-621d6100-96cf-11e9-95f2-259362a473f7.png">
 
