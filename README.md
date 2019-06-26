@@ -6,7 +6,7 @@ LRT (stands for Long-running task) is a minimalistic library for "chunkifying" l
 
 ## Key features
 
-  * Ability to run multiple long-running tasks simultaneously and coordinate their execution with coopeative scheduling
+  * Ability to run multiple long-running tasks concurrently and coordinate their execution with coopeative scheduling
   * Ability to abort outdated tasks
   * Ability to specify chunk budget and maximize its utilization
   * Built-in set of predefined chunk schedulers
