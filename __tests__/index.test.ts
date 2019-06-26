@@ -125,10 +125,7 @@ describe('abortTask', () => {
 
     it('should be aborted immediately', done => {
         const scheduler = createScheduler();
-        const task = scheduler.runTask((function*() {
-            yield;
-            return true;
-        })());
+        const task = scheduler.runTask(emptyGenerator());
 
         task.then(
             () => {
@@ -214,7 +211,53 @@ describe('chunking', () => {
             done();
         });
     });
+
+    it('should not request chunk if task aborted immediately', () => {
+        const requestMock = jest.fn();
+        const scheduler = createScheduler({
+            chunkScheduler: {
+                request: requestMock
+            }
+        });
+
+        const task = scheduler.runTask(emptyGenerator());
+
+        scheduler.abortTask(task);
+
+        expect(requestMock).not.toBeCalled();
+    });
+
+    it('should cancel chunk if last task is aborted', done => {
+        const cancelMock = jest.fn();
+        const scheduler = createScheduler({
+            chunkScheduler: {
+                request: fn => setTimeout(fn, 50),
+                cancel: (token: number) => {
+                    clearTimeout(token);
+                    cancelMock();
+                }
+            }
+        });
+
+        const task1 = scheduler.runTask(emptyGenerator());
+        const task2 = scheduler.runTask(emptyGenerator());
+
+        setTimeout(
+            () => {
+                scheduler.abortTask(task1);
+                expect(cancelMock).not.toBeCalled();
+                scheduler.abortTask(task2);
+                expect(cancelMock).toBeCalledTimes(1);
+                done();
+            },
+            20
+        );
+    });
 });
+
+function* emptyGenerator(): Iterator<void> {
+    yield;
+}
 
 function sleep(ms: number): void {
     const startTime = now();
