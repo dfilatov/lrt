@@ -16,7 +16,7 @@ interface Task<T = void> {
     iterationCount: number;
     meanIterationElapsedTime: number;
     totalElapsedTime: number;
-    resolve(result: unknown): void;
+    resolve(result: T): void;
     reject(reason: unknown): void;
 }
 
