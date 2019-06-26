@@ -185,6 +185,37 @@ describe('abortTask', () => {
     });
 });
 
+describe('chunking', () => {
+    it('should request chunk after budget has been reached', done => {
+        const order: string[] = [];
+        const scheduler = createScheduler({
+            chunkScheduler: {
+                request(fn): void {
+                    order.push('chunk');
+                    fn();
+                }
+            },
+            chunkBudget: 12
+        });
+
+        scheduler.runTask((function*() {
+            let i = 0;
+
+            while(i < 5) {
+                sleep(5);
+                order.push('unit');
+                i++;
+                yield;
+            }
+
+            return i;
+        })()).then(() => {
+            expect(order).toEqual(['chunk', 'unit', 'unit', 'chunk', 'unit', 'unit', 'chunk', 'unit']);
+            done();
+        });
+    });
+});
+
 function sleep(ms: number): void {
     const startTime = now();
 
