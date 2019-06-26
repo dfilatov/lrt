@@ -11,7 +11,7 @@ LRT (stands for Long-running task) is a minimalistic library for "chunkifying" l
   * Ability to specify chunk budget and maximize its utilization
   * Built-in set of predefined chunk schedulers
   * Ability to implement custom chunk scheduler
-  * Support of generators for tasks splitting
+  * Supports generators for tasks splitting
   * Works in both Browser and Node.JS platforms
   * Small, fast and dependency-free
 
