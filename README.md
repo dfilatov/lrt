@@ -2,11 +2,12 @@
 [![Build Status](https://img.shields.io/travis/dfilatov/lrt/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/lrt/branches)
 [![NPM Version](https://img.shields.io/npm/v/lrt.svg?style=flat-square)](https://www.npmjs.com/package/lrt)
 
-LRT (stands for Long-running task) is a minimalistic library for "chunkifying" long-running tasks inside browsers and Node.JS.
+## What is it?
+LRT is a scheduler for long-running tasks inside browsers and Node.JS.
 
 ## Key features
-
-  * Ability to run multiple long-running tasks concurrently and coordinate their execution with coopeative scheduling
+  * API to split long-running tasks into units of work via Iterator protocol
+  * Ability to run multiple long-running tasks concurrently with coordinating their execution via coopeative scheduling
   * Ability to abort outdated tasks
   * Ability to specify chunk budget and maximize its utilization
   * Built-in set of predefined chunk schedulers
