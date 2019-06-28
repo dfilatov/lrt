@@ -34,7 +34,7 @@
   "browser": "lib/index.browser.js",
   "types": "lib/types/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && npx rollup -c rollup.config.ts && BROWSER=true npx rollup -c rollup.config.ts",
+    "build": "rm -rf lib && npx rollup -c rollup.config.js && BROWSER=true npx rollup -c rollup.config.js",
     "lint": "npx tsc --noEmit && npx eslint --ext ts src __tests__",
     "postpublish": "git push --no-verify && git push --no-verify --tags",
     "prepublishOnly": "npm run build",
