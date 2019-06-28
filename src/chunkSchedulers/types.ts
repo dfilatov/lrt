@@ -7,7 +7,7 @@ type ChunkSchedulerType =
     ChunkScheduler;
 
 interface ChunkScheduler<T = unknown> {
-    request(fn: () => T): T;
+    request(fn: () => void): T;
     cancel?(t: T): void;
 }
 
