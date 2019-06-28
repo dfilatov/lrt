@@ -5,6 +5,8 @@
         "target" : "es5",
         "declaration": true,
         "declarationDir": "./lib/types",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
         "sourceMap": true,
         "lib": [
             "es2017",
@@ -12,6 +14,7 @@
         ]
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "rollup.config.ts"
     ]
 }

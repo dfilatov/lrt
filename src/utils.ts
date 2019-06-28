@@ -1,12 +1,14 @@
 const now: () => number = typeof performance === 'object' && typeof performance.now === 'function' ?
     () => performance.now() :
     (() => {
-        try {
-            return require('perf_hooks').performance.now;
+        if(!process.env.BROWSER) {
+            try {
+                return require('perf_hooks').performance.now;
+            }
+            catch {}
         }
-        catch {
-            return Date.now;
-        }
+
+        return Date.now;
     })();
 
 const microtaskPromise = Promise.resolve();
