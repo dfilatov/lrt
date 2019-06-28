@@ -1,6 +1,7 @@
 import replace from 'rollup-plugin-replace';
 import typescript from 'rollup-plugin-typescript2';
-import pkg from './package.json';
+
+const pkg = require('./package.json');
 
 const BROWSER = !!process.env.BROWSER;
 
