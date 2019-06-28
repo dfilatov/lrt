@@ -84,7 +84,7 @@ function createScheduler({
                 };
             });
 
-            pendingTasks.set(promise, <Task<unknown>>task!);
+            pendingTasks.set(promise, task!);
 
             microtask(() => {
                 // check if it's not already aborted
