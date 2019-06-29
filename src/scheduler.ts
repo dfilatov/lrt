@@ -17,18 +17,18 @@ function createScheduler({
     function chunk(): void {
         chunkSchedulerToken = null;
 
+        let iterationStartTime = now();
         let checkBudget = false;
-        let startTime = now();
-        let restBudget = chunkBudget;
+        let restChunkBudget = chunkBudget;
         const nextTasksOrder = [];
 
         while(tasksOrder.length > 0) {
-            const promise = tasksOrder.shift()!;
-            const task = pendingTasks.get(promise)!;
+            const taskPromise = tasksOrder.shift()!;
+            const task = pendingTasks.get(taskPromise)!;
             let iterated = false;
 
-            if(checkBudget && restBudget < task.meanIterationElapsedTime) {
-                nextTasksOrder.push(promise);
+            if(checkBudget && restChunkBudget < task.meanIterationElapsedTime) {
+                nextTasksOrder.push(taskPromise);
             }
             else {
                 checkBudget = true;
@@ -41,29 +41,29 @@ function createScheduler({
                     task.value = value;
 
                     if(done) {
-                        pendingTasks.delete(promise);
+                        pendingTasks.delete(taskPromise);
                         task.resolve(value);
                     }
                     else {
-                        tasksOrder.push(promise);
+                        tasksOrder.push(taskPromise);
                     }
                 }
                 catch(e) {
-                    pendingTasks.delete(promise);
+                    pendingTasks.delete(taskPromise);
                     task.reject(e);
                 }
             }
 
-            const elapsedTime = now() - startTime;
+            const iterationElapsedTime = now() - iterationStartTime;
 
             if(iterated) {
                 task.iterationCount++;
-                task.totalElapsedTime += elapsedTime;
+                task.totalElapsedTime += iterationElapsedTime;
                 task.meanIterationElapsedTime = task.totalElapsedTime / task.iterationCount;
             }
 
-            restBudget -= elapsedTime;
-            startTime += elapsedTime;
+            restChunkBudget -= iterationElapsedTime;
+            iterationStartTime += iterationElapsedTime;
         }
 
         if(nextTasksOrder.length > 0) {
@@ -75,7 +75,7 @@ function createScheduler({
     return {
         runTask<T = void>(iterator: Iterator<T>): Promise<T> {
             let task: Task<T>;
-            const promise = new Promise<T>((resolve, reject) => {
+            const taskPromise = new Promise<T>((resolve, reject) => {
                 task = {
                     value: undefined,
                     iterator,
@@ -87,27 +87,27 @@ function createScheduler({
                 };
             });
 
-            pendingTasks.set(promise, task!);
+            pendingTasks.set(taskPromise, task!);
 
             microtask(() => {
                 // check if it's not already aborted
-                if(!pendingTasks.has(promise)) {
+                if(!pendingTasks.has(taskPromise)) {
                     return;
                 }
 
-                tasksOrder.push(promise);
+                tasksOrder.push(taskPromise);
 
                 if(tasksOrder.length === 1) {
                     chunkSchedulerToken = chunkScheduler.request(chunk);
                 }
             });
 
-            return promise;
+            return taskPromise;
         },
 
-        abortTask(promise: Promise<unknown>): void {
-            if(pendingTasks.delete(promise)) {
-                const taskOrderIdx = tasksOrder.indexOf(promise);
+        abortTask(taskPromise: Promise<unknown>): void {
+            if(pendingTasks.delete(taskPromise)) {
+                const taskOrderIdx = tasksOrder.indexOf(taskPromise);
 
                 // task can be absent if it's added to pending tasks via `runTask` but then
                 // `abortTask` is called synchronously before microtask callback is invoked
