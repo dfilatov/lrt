@@ -2,9 +2,12 @@ import { getChunkScheduler } from './chunkSchedulers';
 import { now, microtask } from './utils';
 import { Scheduler, SchedulerOptions, Task } from './types';
 
+const DEFAULT_CHUNK_SCHEDULER_TYPE = 'auto';
+const DEFAULT_CHUNK_BUDGET = 10;
+
 function createScheduler({
-    chunkScheduler: chunkSchedulerType = 'auto',
-    chunkBudget = 10
+    chunkScheduler: chunkSchedulerType = DEFAULT_CHUNK_SCHEDULER_TYPE,
+    chunkBudget = DEFAULT_CHUNK_BUDGET
 }: SchedulerOptions = {}): Scheduler {
     const pendingTasks = new Map<Promise<unknown>, Task<unknown>>();
     const chunkScheduler = getChunkScheduler(chunkSchedulerType);
