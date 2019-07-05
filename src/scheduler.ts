@@ -73,12 +73,12 @@ function createScheduler({
     }
 
     return {
-        runTask<T = void>(iterator: Iterator<T>): Promise<T> {
+        runTask<T = void>(taskIterator: Iterator<T>): Promise<T> {
             let task: Task<T>;
             const taskPromise = new Promise<T>((resolve, reject) => {
                 task = {
                     value: undefined,
-                    iterator,
+                    iterator: taskIterator,
                     iterationCount: 0,
                     meanIterationElapsedTime: 0,
                     totalElapsedTime: 0,
@@ -110,7 +110,7 @@ function createScheduler({
                 const taskOrderIdx = tasksOrder.indexOf(taskPromise);
 
                 // task can be absent if it's added to pending tasks via `runTask` but then
-                // `abortTask` is called synchronously before microtask callback is invoked
+                // `abortTask` is called synchronously before invoking microtask callback
                 if(taskOrderIdx > -1) {
                     tasksOrder.splice(taskOrderIdx, 1);
 
