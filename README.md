@@ -18,7 +18,7 @@ LRT is a scheduler for long-running tasks inside browsers and Node.JS.
 
 The main idea is to split long-running tasks into small units of work joined into chunks with limited budget of execution time. Units of works are executed synchronously until budget of current chunk is reached, afterwards thread is unblocked until scheduler executes next chunk and so on until all tasks have been completed.
 
-<img width="1343" alt="LRT" src="https://user-images.githubusercontent.com/67957/60686839-c3a1b480-9eb3-11e9-9a5a-bca755676412.png">
+<img width="1175" alt="lrt" src="https://user-images.githubusercontent.com/67957/60708338-84587f80-9f16-11e9-980f-ed0b715e7b4e.png">
 
 ## Table of Contents
   * [Installation](#installation)
