@@ -25,7 +25,7 @@ The main idea is to split long-running tasks into small units of work joined int
   * [Usage](#usage)
   * [API](#api)
     * [Scheduler](#scheduler)
-    * [Iterator](#iterator)
+    * [Task iterator](#task-iterator)
     * [Chunk scheduler](#chunk-scheduler)
   * [Questions and answers](#questions-and-answers)
   * [Example](#example)
@@ -55,14 +55,15 @@ const scheduler = createScheduler(options);
   * `options.chunkScheduler` (optional, default is `'auto'`) A [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler.
 
 Returned `scheduler` has two methods:
-  * `const task = scheduler.runTask(iterator)` Runs task with a given [iterator](#iterator) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively.
+  * `const task = scheduler.runTask(taskIterator)`
+  Runs task with a given [taskIterator](#task-iterator) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively.
   * `scheduler.abortTask(task)` Aborts task execution as soon as possible (see diagram above).
   
 ### Scheduler
 Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
   
-### Iterator
-Iterator should be an object implementing [Iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol). The most convenient way to build iterator is to use generators (calling a generator function returns a generator object implementing iterator protocol). Another option is to build your own object implementing iterator protocol.
+### Task iterator
+Task iterator should be an object implementing [Iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol). The most convenient way to build iterator is to use generators (calling a generator function returns a generator object implementing iterator protocol). Another option is to build your own object implementing iterator protocol.
 
 Example with generator:
 ```ts
