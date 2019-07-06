@@ -50,9 +50,9 @@ const { createScheduler } = require('lrt');
 ```ts
 const scheduler = createScheduler(options);
 ```
-  * `options` (optional)
-  * `options.chunkBudget` (optional, default is `10`) An execution budget of chunk in milliseconds.
-  * `options.chunkScheduler` (optional, default is `'auto'`) A [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler.
+  * `options` (`object`, optional)
+  * `options.chunkBudget` (`number`, optional, default is `10`) An execution budget of chunk in milliseconds.
+  * `options.chunkScheduler` (`string|object`, optional, default is `'auto'`) A [chunk scheduler](#chunk-scheduler), can be `'auto'`, `'idleCallback'`, `'animationFrame'`, `'immediate'`, `'timeout'` or object representing custom scheduler.
 
 Returned `scheduler` has two methods:
   * `const task = scheduler.runTask(taskIterator)`
