@@ -60,7 +60,7 @@ Returned `scheduler` has two methods:
   * `scheduler.abortTask(task)` Aborts task execution as soon as possible (see diagram above).
   
 ### Scheduler
-Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
+Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It accumulates statistics while tasks are being run and tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
   
 ### Task iterator
 Task iterator should be an object implementing [Iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol). The most convenient way to build iterator is to use generators (calling a generator function returns a generator object implementing iterator protocol). Another option is to build your own object implementing iterator protocol.
