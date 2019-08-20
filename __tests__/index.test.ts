@@ -62,7 +62,7 @@ describe('runTask', () => {
                 }
 
                 return i;
-            })()),
+            })())
         ]).then(([result1, result2]) => {
             expect(order)
                 .toEqual(['unit1', 'unit2', 'unit1', 'unit2', 'unit1', 'unit2', 'unit1', 'unit2', 'unit1', 'unit2']);
