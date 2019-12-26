@@ -12,7 +12,7 @@ interface SchedulerOptions {
 
 interface Task<T = void> {
     value: T | undefined;
-    iterator: Iterator<T>;
+    iterator: Iterator<T, unknown, T | undefined>;
     iterationCount: number;
     meanIterationElapsedTime: number;
     totalElapsedTime: number;
