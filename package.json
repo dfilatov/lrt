@@ -36,7 +36,7 @@
   "scripts": {
     "build": "rm -rf lib && npx rollup -c rollup.config.ts && BROWSER=true npx rollup -c rollup.config.ts",
     "lint": "npx tsc --noEmit && npx eslint --ext ts src __tests__",
-    "postpublish": "git push && git push --tags",
+    "postpublish": "git push --follow-tags --no-verify",
     "prepublishOnly": "npm run build",
     "test": "npx jest"
   },
