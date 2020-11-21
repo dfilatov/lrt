@@ -8,7 +8,14 @@
     "rules": {
         "@typescript-eslint/array-type": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
-        "@typescript-eslint/generic-type-naming": ["error", "^T([A-Z][a-zA-Z]+)?$"],
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                "selector": "typeParameter",
+                "format": ["PascalCase"],
+                "prefix": ["T"]
+            }
+        ],
         "@typescript-eslint/member-delimiter-style": [
             "error",
             {
