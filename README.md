@@ -1,5 +1,5 @@
 # LRT
-[![Build Status](https://img.shields.io/travis/dfilatov/lrt/master.svg?style=flat-square)](https://travis-ci.org/dfilatov/lrt/branches)
+![Tests](https://github.com/dfilatov/lrt/workflows/Tests/badge.svg?branch=master)
 [![NPM Version](https://img.shields.io/npm/v/lrt.svg?style=flat-square)](https://www.npmjs.com/package/lrt)
 
 ## What is it?
