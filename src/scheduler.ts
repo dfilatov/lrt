@@ -20,7 +20,7 @@ function createScheduler({
         let iterationStartTime = now();
         let checkBudget = false;
         let restChunkBudget = chunkBudget;
-        const nextTasksOrder = [];
+        const nextTasksOrder: Promise<unknown>[] = [];
 
         while(tasksOrder.length > 0) {
             const taskPromise = tasksOrder.shift()!;

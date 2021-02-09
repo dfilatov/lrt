@@ -110,12 +110,9 @@ describe('abortTask', () => {
             return i;
         })());
 
-        task.then(
+        task.finally(
             () => {
                 done('Aborted task mustn\'t be completed');
-            },
-            () => {
-                done('Aborted task mustn\'t be rejected');
             }
         );
 
@@ -127,12 +124,9 @@ describe('abortTask', () => {
         const scheduler = createScheduler();
         const task = scheduler.runTask(emptyGenerator());
 
-        task.then(
+        task.finally(
             () => {
                 done('Aborted task mustn\'t be completed');
-            },
-            () => {
-                done('Aborted task mustn\'t be rejected');
             }
         );
 
