@@ -7,6 +7,7 @@
     "plugins": ["@typescript-eslint", "sonarjs"],
     "rules": {
         "@typescript-eslint/array-type": "error",
+        "@typescript-eslint/comma-dangle": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
         "@typescript-eslint/naming-convention": [
             "error",
@@ -31,7 +32,6 @@
         "arrow-spacing": "error",
         "block-spacing": "error",
         "camelcase": "error",
-        "comma-dangle": ["error", "never"],
         "curly": "error",
         "func-call-spacing": "error",
         "generator-star-spacing": ["error", { "before": false, "after": true, "anonymous": "neither" }],

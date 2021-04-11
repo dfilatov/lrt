@@ -18,7 +18,8 @@ const rollupConfig = {
             }
         }),
         replace({
-            'process.env.BROWSER': JSON.stringify(BROWSER)
+            'process.env.BROWSER': JSON.stringify(BROWSER),
+            preventAssignment: true
         })
     ]
 };
