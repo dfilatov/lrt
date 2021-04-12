@@ -110,7 +110,7 @@ Also you can specify your own implementation of scheduler.
 
 #### Custom chunk scheduler
 Custom scheduler should implement two methods:
-  * `request(fn)` (required) Accepts function `fn` and returns `token` for possible aborting via `clear` method (if it is specified)
+  * `request(fn)` (required) Accepts function `fn` and returns `token` for possible aborting via `cancel` method (if it is specified)
   * `cancel(token)` (optional) Accepts `token` and cancels scheduling
   
 For example, let's implement scheduler which runs next chunk of units in ~100 milliseconds after previous chunk has ended:
