@@ -1,5 +1,5 @@
 import { createScheduler } from '../src';
-import { now } from '../src/utils';
+import { emptyGenerator, sleep } from './utils';
 
 describe('runTask', () => {
     it('should fulfill promise with result after task has completed', done => {
@@ -248,13 +248,3 @@ describe('chunking', () => {
         );
     });
 });
-
-function* emptyGenerator(): Iterator<void> {
-    yield;
-}
-
-function sleep(ms: number): void {
-    const startTime = now();
-
-    while(now() - startTime < ms) {}
-}

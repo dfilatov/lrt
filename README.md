@@ -58,10 +58,10 @@ Returned `scheduler` has two methods:
   * `const task = scheduler.runTask(taskIterator)`
   Runs task with a given [taskIterator](#task-iterator) and returns task (promise) resolved or rejected after task has completed or thrown an error respectively.
   * `scheduler.abortTask(task)` Aborts task execution as soon as possible (see diagram above).
-  
+
 ### Scheduler
 Scheduler is responsible for tasks running, aborting and coordinating order of execution of their units. It accumulates statistics while tasks are being run and tries to maximize budget utilization of each chunk. If a unit of some task has no time to be executed in the current chunk, it will get higher priority to be executed in the next chunk.
-  
+
 ### Task iterator
 Task iterator should be an object implementing [Iterator protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol). The most convenient way to build iterator is to use generators (calling a generator function returns a generator object implementing iterator protocol). Another option is to build your own object implementing iterator protocol.
 
@@ -69,13 +69,13 @@ Example with generator:
 ```ts
 function* generator() {
     let i = 0;
-    
+
     while(i < 10) {
         doCurrentPartOfTask(i);
         i++;
         yield;
     }
-    
+
     return i;
 }
 
@@ -87,7 +87,7 @@ Example with object implementing iterator protocol:
 const iterator = {
     next(i = 0) {
         doCurrentPartOfTask(i);
-        
+
         return {
             done: i < 10,
             value: i + 1
@@ -100,19 +100,20 @@ For convenience LRT passes a previous value as an argument to the `next` method.
 ### Chunk scheduler
 Chunk scheduler is utilized internally to schedule execution of the next chunk of units. Built-in options:
   * `'auto'` (by default) LRT will try to detect the best available option for your current environment.
-In browsers any of `'idleCallback'` or `'animationFrame'` option will be used depending on their availability, or `'immediate'` inside NodeJS. If nothing suitable is available, `'timeout'` option will be used as a fallback.
+In browsers any of `'idleCallback'` / `'animationFrame'` / `'postMessage'` option will be used depending on their availability, or `'immediate'` inside NodeJS. If nothing suitable is available, `'timeout'` option will be used as a fallback.
   * `'idleCallback'` LRT will try to use [Background Tasks API](https://developer.mozilla.org/en-US/docs/Web/API/Background_Tasks_API). If it's not available, `'timeout'` option will be used as a fallback.
   * `'animationFrame'` LRT will try to use [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame). If your tasks need to change the DOM, you should use it instead `'auto'` or `'idleCallback'`. If it's not available, `'timeout'` option will be used as a fallback.
+  * `'postMessage'` LRT will try to use [postMessage](https://developer.mozilla.org/ru/docs/Web/API/Window/postMessage). If it's not available, `'timeout'` option will be used as a fallback.
   * `'immediate'` LRT will try to use [setImmediate](https://developer.mozilla.org/en-US/docs/Web/API/Window/setImmediate). If it's not available, `'timeout'` option will be used as a fallback.
   * `'timeout'` LRT will use [setTimeout](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) with zero delay.
-  
+
 Also you can specify your own implementation of scheduler.
 
 #### Custom chunk scheduler
 Custom scheduler should implement two methods:
   * `request(fn)` (required) Accepts function `fn` and returns `token` for possible aborting via `cancel` method (if it is specified)
   * `cancel(token)` (optional) Accepts `token` and cancels scheduling
-  
+
 For example, let's implement scheduler which runs next chunk of units in ~100 milliseconds after previous chunk has ended:
 ```ts
 const customChunkScheduler = {
@@ -129,7 +130,7 @@ const scheduler = createScheduler({
 
 **What if unit takes more time than chunk budget?**
 
-More likely this means that chunk budget is too small or you need to split your tasks into smaller units. Anyway LRT guarantees  at least one of units of some task will be executed within each chunk. 
+More likely this means that chunk budget is too small or you need to split your tasks into smaller units. Anyway LRT guarantees  at least one of units of some task will be executed within each chunk.
 
 **Why not just move long-running task into Web Worker?**
 

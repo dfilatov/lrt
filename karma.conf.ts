@@ -9,13 +9,16 @@ module.exports = (config: { set(options: Record<string, unknown>): void; }) => {
             '**/*.ts': 'karma-typescript'
         },
         karmaTypescriptConfig: {
-            include: ['__tests__/*.test.ts'],
+            include: [
+                '__tests__/**/*.all.test.ts',
+                '__tests__/**/*.browser.test.ts'
+            ],
             bundlerOptions: {
                 exclude: ['perf_hooks']
             }
         },
         files: [
-            '__tests__/*.test.ts',
+            '__tests__/**/*.ts',
             'src/**/*.ts'
         ]
     });
