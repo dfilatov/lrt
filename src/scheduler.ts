@@ -48,9 +48,9 @@ function createScheduler({
                         tasksOrder.push(taskPromise);
                     }
                 }
-                catch(e) {
+                catch(err) {
                     pendingTasks.delete(taskPromise);
-                    task.reject(e);
+                    task.reject(err);
                 }
             }
 

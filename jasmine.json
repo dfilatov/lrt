@@ -1,6 +1,7 @@
 {
     "spec_dir": "__tests__",
     "spec_files": [
-        "**/*.ts"
+        "**/*.all.test.ts",
+        "**/*.node.test.ts"
     ]
 }

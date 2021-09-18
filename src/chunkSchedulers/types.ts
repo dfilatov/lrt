@@ -2,6 +2,7 @@ type ChunkSchedulerType =
     'animationFrame' |
     'idleCallback' |
     'immediate' |
+    'postMessage' |
     'timeout' |
     'auto' |
     ChunkScheduler;
