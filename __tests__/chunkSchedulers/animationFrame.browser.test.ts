@@ -1,20 +1,20 @@
 import { createScheduler, Scheduler } from '../../src';
 import { simpleGenerator } from '../utils';
 
-describe('postMessage chunk scheduler', () => {
+describe('animationFrame chunk scheduler', () => {
     let scheduler: Scheduler;
 
     beforeEach(() => {
         scheduler = createScheduler({
-            chunkScheduler: 'postMessage'
+            chunkScheduler: 'animationFrame'
         });
     });
 
-    it('should use window.postMessage()', done => {
-        spyOn(window, 'postMessage').and.callThrough();
+    it('should use window.requestAnimationFrame()', done => {
+        spyOn(window, 'requestAnimationFrame').and.callThrough();
 
         scheduler.runTask(simpleGenerator()).then(() => {
-            expect((window.postMessage as jasmine.Spy).calls.count()).toEqual(10);
+            expect((window.requestAnimationFrame as jasmine.Spy).calls.count()).toEqual(10);
             done();
         });
     });

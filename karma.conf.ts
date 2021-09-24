@@ -20,6 +20,9 @@ module.exports = (config: { set(options: Record<string, unknown>): void; }) => {
         files: [
             '__tests__/**/*.ts',
             'src/**/*.ts'
+        ],
+        exclude: [
+            '__tests__/**/*.nodejs.test.ts'
         ]
     });
 };

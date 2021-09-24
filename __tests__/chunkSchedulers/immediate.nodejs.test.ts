@@ -1,20 +1,20 @@
 import { createScheduler, Scheduler } from '../../src';
 import { simpleGenerator } from '../utils';
 
-describe('postMessage chunk scheduler', () => {
+describe('immediate chunk scheduler', () => {
     let scheduler: Scheduler;
 
     beforeEach(() => {
         scheduler = createScheduler({
-            chunkScheduler: 'postMessage'
+            chunkScheduler: 'immediate'
         });
     });
 
-    it('should use window.postMessage()', done => {
-        spyOn(window, 'postMessage').and.callThrough();
+    it('should use setImmediate()', done => {
+        spyOn(globalThis, 'setImmediate').and.callThrough();
 
         scheduler.runTask(simpleGenerator()).then(() => {
-            expect((window.postMessage as jasmine.Spy).calls.count()).toEqual(10);
+            expect((globalThis.setImmediate as unknown as jasmine.Spy).calls.count()).toEqual(10);
             done();
         });
     });
