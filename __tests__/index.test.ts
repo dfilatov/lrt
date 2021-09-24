@@ -112,7 +112,7 @@ describe('abortTask', () => {
 
         task.finally(
             () => {
-                done('Aborted task mustn\'t be completed');
+                done.fail('Aborted task mustn\'t be completed');
             }
         );
 
@@ -126,7 +126,7 @@ describe('abortTask', () => {
 
         task.finally(
             () => {
-                done('Aborted task mustn\'t be completed');
+                done.fail('Aborted task mustn\'t be completed');
             }
         );
 
@@ -162,10 +162,10 @@ describe('abortTask', () => {
 
         task1.then(
             () => {
-                done('Aborted task mustn\'t be completed');
+                done.fail('Aborted task mustn\'t be completed');
             },
             () => {
-                done('Aborted task mustn\'t be rejected');
+                done.fail('Aborted task mustn\'t be rejected');
             }
         );
 
@@ -186,14 +186,14 @@ describe('chunking', () => {
                     fn();
                 }
             },
-            chunkBudget: 12
+            chunkBudget: 50
         });
 
         scheduler.runTask((function*() {
             let i = 0;
 
             while(i < 5) {
-                sleep(5);
+                sleep(20);
                 order.push('unit');
                 i++;
                 yield;
@@ -207,7 +207,7 @@ describe('chunking', () => {
     });
 
     it('should not request chunk if task aborted immediately', () => {
-        const requestMock = jest.fn();
+        const requestMock = jasmine.createSpy();
         const scheduler = createScheduler({
             chunkScheduler: {
                 request: requestMock
@@ -218,11 +218,11 @@ describe('chunking', () => {
 
         scheduler.abortTask(task);
 
-        expect(requestMock).not.toBeCalled();
+        expect(requestMock).not.toHaveBeenCalled();
     });
 
     it('should cancel chunk if last task is aborted', done => {
-        const cancelMock = jest.fn();
+        const cancelMock = jasmine.createSpy();
         const scheduler = createScheduler({
             chunkScheduler: {
                 request: fn => setTimeout(fn, 50),
@@ -239,9 +239,9 @@ describe('chunking', () => {
         setTimeout(
             () => {
                 scheduler.abortTask(task1);
-                expect(cancelMock).not.toBeCalled();
+                expect(cancelMock).not.toHaveBeenCalled();
                 scheduler.abortTask(task2);
-                expect(cancelMock).toBeCalledTimes(1);
+                expect(cancelMock.calls.count()).toEqual(1);
                 done();
             },
             20
