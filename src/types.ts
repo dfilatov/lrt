@@ -1,7 +1,7 @@
 import { ChunkSchedulerType } from './chunkSchedulers';
 
 interface Scheduler {
-    runTask<T = void>(iterator: Iterator<T>): Promise<T>;
+    runTask<T = void>(iterator: Iterator<unknown, T>): Promise<T>;
     abortTask(promise: Promise<unknown>): void;
 }
 
@@ -11,8 +11,8 @@ interface SchedulerOptions {
 }
 
 interface Task<T = void> {
-    value: T | undefined;
-    iterator: Iterator<T, unknown, T | undefined>;
+    value: unknown;
+    iterator: Iterator<unknown, T, unknown>;
     iterationCount: number;
     meanIterationElapsedTime: number;
     totalElapsedTime: number;

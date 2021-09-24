@@ -73,7 +73,7 @@ function createScheduler({
     }
 
     return {
-        runTask<T = void>(taskIterator: Iterator<T, unknown, T | undefined>): Promise<T> {
+        runTask<T = void>(taskIterator: Iterator<unknown, T>): Promise<T> {
             let task: Task<T>;
             const taskPromise = new Promise<T>((resolve, reject) => {
                 task = {
