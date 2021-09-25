@@ -5,7 +5,7 @@ import { immediateChunkScheduler } from './immediate';
 import { postMessageScheduler } from './postMessage';
 import { timeoutChunkScheduler } from './timeout';
 
-const BUILTIN_CHUNK_SHEDULERS: Record<Exclude<ChunkSchedulerType, ChunkScheduler>, ChunkScheduler | null> = {
+const BUILTIN_CHUNK_SHEDULERS: Record<Extract<ChunkSchedulerType, string>, ChunkScheduler | null> = {
     auto:
         idleCallbackChunkScheduler ||
         animationFrameChunkScheduler ||
@@ -18,10 +18,30 @@ const BUILTIN_CHUNK_SHEDULERS: Record<Exclude<ChunkSchedulerType, ChunkScheduler
     timeout: timeoutChunkScheduler
 };
 
-function getChunkScheduler(type: ChunkSchedulerType): ChunkScheduler {
-    return typeof type === 'string' ?
-        BUILTIN_CHUNK_SHEDULERS[type] || timeoutChunkScheduler :
-        type;
+function getChunkScheduler(type: ChunkSchedulerType | ChunkSchedulerType[]): ChunkScheduler {
+    if(typeof type === 'string') {
+        return BUILTIN_CHUNK_SHEDULERS[type] || timeoutChunkScheduler;
+    }
+
+    if(Array.isArray(type)) {
+        for(let i = 0; i < type.length; i++) {
+            const item = type[i];
+
+            if(typeof item === 'string') {
+                const chunkScheduler = BUILTIN_CHUNK_SHEDULERS[item];
+
+                if(chunkScheduler) {
+                    return chunkScheduler;
+                }
+            } else {
+                return item;
+            }
+        }
+
+        return timeoutChunkScheduler;
+    }
+
+    return type;
 }
 
 export {

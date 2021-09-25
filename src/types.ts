@@ -6,7 +6,7 @@ interface Scheduler {
 }
 
 interface SchedulerOptions {
-    chunkScheduler?: ChunkSchedulerType;
+    chunkScheduler?: ChunkSchedulerType | ChunkSchedulerType[];
     chunkBudget?: number;
 }
 
